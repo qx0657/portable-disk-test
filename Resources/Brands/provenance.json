@@ -1,0 +1,16 @@
+{
+  "assets": [
+    {
+      "asset": "sandisk-red.svg",
+      "source": "https://www.sandisk.com/content/dam/sandisk/en-us/assets/home-page/brand-logos/sandisk/sandisk-logo.svg",
+      "sha256": "e5d3668511cb786b68d6d0c5fe81a290910dbcc86d14b6e03f1eac6bf6f30c14",
+      "use": "Unmodified official wordmark identifying the connected drive brand; no endorsement implied."
+    },
+    {
+      "asset": "sandisk-white.svg",
+      "source": "https://www.sandisk.com/content/dam/store/en-us/assets/home-page/brand-logos/sandisk/sandisk-logo-white.svg",
+      "sha256": "29c8bab4258a91cbc8495152f4b7926d6563622bf50ccbf591e05fbe3f1f07ab",
+      "use": "Unmodified official wordmark identifying the connected drive brand; no endorsement implied."
+    }
+  ]
+}

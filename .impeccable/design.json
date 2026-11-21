@@ -1,0 +1,675 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-21T05:41:19.492262+00:00",
+  "title": "Design System: 移动硬盘测试",
+  "extensions": {
+    "colorMeta": {
+      "ground-light": {
+        "role": "neutral",
+        "displayName": "窗口底色 · 浅色",
+        "tonalRamp": [
+          "oklch(15.00% 0.00248 165.08)",
+          "oklch(26.43% 0.00248 165.08)",
+          "oklch(37.86% 0.00248 165.08)",
+          "oklch(49.29% 0.00248 165.08)",
+          "oklch(60.71% 0.00248 165.08)",
+          "oklch(72.14% 0.00248 165.08)",
+          "oklch(83.57% 0.00248 165.08)",
+          "oklch(95.00% 0.00248 165.08)"
+        ]
+      },
+      "ground-dark": {
+        "role": "neutral",
+        "displayName": "窗口底色 · 深色",
+        "tonalRamp": [
+          "oklch(15.00% 0.01415 172.72)",
+          "oklch(26.43% 0.01415 172.72)",
+          "oklch(37.86% 0.01415 172.72)",
+          "oklch(49.29% 0.01415 172.72)",
+          "oklch(60.71% 0.01415 172.72)",
+          "oklch(72.14% 0.01415 172.72)",
+          "oklch(83.57% 0.01415 172.72)",
+          "oklch(95.00% 0.01415 172.72)"
+        ]
+      },
+      "sidebar-light": {
+        "role": "neutral",
+        "displayName": "设备侧栏 · 浅色",
+        "tonalRamp": [
+          "oklch(15.00% 0.00843 168.75)",
+          "oklch(26.43% 0.00843 168.75)",
+          "oklch(37.86% 0.00843 168.75)",
+          "oklch(49.29% 0.00843 168.75)",
+          "oklch(60.71% 0.00843 168.75)",
+          "oklch(72.14% 0.00843 168.75)",
+          "oklch(83.57% 0.00843 168.75)",
+          "oklch(95.00% 0.00843 168.75)"
+        ]
+      },
+      "sidebar-dark": {
+        "role": "neutral",
+        "displayName": "设备侧栏 · 深色",
+        "tonalRamp": [
+          "oklch(15.00% 0.01451 172.36)",
+          "oklch(26.43% 0.01451 172.36)",
+          "oklch(37.86% 0.01451 172.36)",
+          "oklch(49.29% 0.01451 172.36)",
+          "oklch(60.71% 0.01451 172.36)",
+          "oklch(72.14% 0.01451 172.36)",
+          "oklch(83.57% 0.01451 172.36)",
+          "oklch(95.00% 0.01451 172.36)"
+        ]
+      },
+      "panel-light": {
+        "role": "neutral",
+        "displayName": "数据表面 · 浅色",
+        "tonalRamp": [
+          "oklch(15.00% 0.00661 160.08)",
+          "oklch(26.43% 0.00661 160.08)",
+          "oklch(37.86% 0.00661 160.08)",
+          "oklch(49.29% 0.00661 160.08)",
+          "oklch(60.71% 0.00661 160.08)",
+          "oklch(72.14% 0.00661 160.08)",
+          "oklch(83.57% 0.00661 160.08)",
+          "oklch(95.00% 0.00661 160.08)"
+        ]
+      },
+      "panel-dark": {
+        "role": "neutral",
+        "displayName": "数据表面 · 深色",
+        "tonalRamp": [
+          "oklch(15.00% 0.02190 166.63)",
+          "oklch(26.43% 0.02190 166.63)",
+          "oklch(37.86% 0.02190 166.63)",
+          "oklch(49.29% 0.02190 166.63)",
+          "oklch(60.71% 0.02190 166.63)",
+          "oklch(72.14% 0.02190 166.63)",
+          "oklch(83.57% 0.02190 166.63)",
+          "oklch(95.00% 0.02190 166.63)"
+        ]
+      },
+      "accent-light": {
+        "role": "primary",
+        "displayName": "松针强调色 · 浅色",
+        "tonalRamp": [
+          "oklch(15.00% 0.06792 178.59)",
+          "oklch(26.43% 0.06792 178.59)",
+          "oklch(37.86% 0.06792 178.59)",
+          "oklch(49.29% 0.06792 178.59)",
+          "oklch(60.71% 0.06792 178.59)",
+          "oklch(72.14% 0.06792 178.59)",
+          "oklch(83.57% 0.06792 178.59)",
+          "oklch(95.00% 0.06792 178.59)"
+        ]
+      },
+      "accent-dark": {
+        "role": "primary",
+        "displayName": "松针强调色 · 深色",
+        "tonalRamp": [
+          "oklch(15.00% 0.08082 173.32)",
+          "oklch(26.43% 0.08082 173.32)",
+          "oklch(37.86% 0.08082 173.32)",
+          "oklch(49.29% 0.08082 173.32)",
+          "oklch(60.71% 0.08082 173.32)",
+          "oklch(72.14% 0.08082 173.32)",
+          "oklch(83.57% 0.08082 173.32)",
+          "oklch(95.00% 0.08082 173.32)"
+        ]
+      },
+      "muted-light": {
+        "role": "neutral",
+        "displayName": "辅助文字 · 浅色",
+        "tonalRamp": [
+          "oklch(15.00% 0.02933 170.89)",
+          "oklch(26.43% 0.02933 170.89)",
+          "oklch(37.86% 0.02933 170.89)",
+          "oklch(49.29% 0.02933 170.89)",
+          "oklch(60.71% 0.02933 170.89)",
+          "oklch(72.14% 0.02933 170.89)",
+          "oklch(83.57% 0.02933 170.89)",
+          "oklch(95.00% 0.02933 170.89)"
+        ]
+      },
+      "muted-dark": {
+        "role": "neutral",
+        "displayName": "辅助文字 · 深色",
+        "tonalRamp": [
+          "oklch(15.00% 0.02588 164.27)",
+          "oklch(26.43% 0.02588 164.27)",
+          "oklch(37.86% 0.02588 164.27)",
+          "oklch(49.29% 0.02588 164.27)",
+          "oklch(60.71% 0.02588 164.27)",
+          "oklch(72.14% 0.02588 164.27)",
+          "oklch(83.57% 0.02588 164.27)",
+          "oklch(95.00% 0.02588 164.27)"
+        ]
+      },
+      "line-light": {
+        "role": "neutral",
+        "displayName": "分隔与轨道 · 浅色",
+        "tonalRamp": [
+          "oklch(15.00% 0.01337 159.90)",
+          "oklch(26.43% 0.01337 159.90)",
+          "oklch(37.86% 0.01337 159.90)",
+          "oklch(49.29% 0.01337 159.90)",
+          "oklch(60.71% 0.01337 159.90)",
+          "oklch(72.14% 0.01337 159.90)",
+          "oklch(83.57% 0.01337 159.90)",
+          "oklch(95.00% 0.01337 159.90)"
+        ]
+      },
+      "line-dark": {
+        "role": "neutral",
+        "displayName": "分隔与轨道 · 深色",
+        "tonalRamp": [
+          "oklch(15.00% 0.02568 164.67)",
+          "oklch(26.43% 0.02568 164.67)",
+          "oklch(37.86% 0.02568 164.67)",
+          "oklch(49.29% 0.02568 164.67)",
+          "oklch(60.71% 0.02568 164.67)",
+          "oklch(72.14% 0.02568 164.67)",
+          "oklch(83.57% 0.02568 164.67)",
+          "oklch(95.00% 0.02568 164.67)"
+        ]
+      },
+      "selected-light": {
+        "role": "primary",
+        "displayName": "林荫选中色 · 浅色",
+        "tonalRamp": [
+          "oklch(15.00% 0.05804 177.08)",
+          "oklch(26.43% 0.05804 177.08)",
+          "oklch(37.86% 0.05804 177.08)",
+          "oklch(49.29% 0.05804 177.08)",
+          "oklch(60.71% 0.05804 177.08)",
+          "oklch(72.14% 0.05804 177.08)",
+          "oklch(83.57% 0.05804 177.08)",
+          "oklch(95.00% 0.05804 177.08)"
+        ]
+      },
+      "selected-dark": {
+        "role": "primary",
+        "displayName": "林荫选中色 · 深色",
+        "tonalRamp": [
+          "oklch(15.00% 0.06156 172.21)",
+          "oklch(26.43% 0.06156 172.21)",
+          "oklch(37.86% 0.06156 172.21)",
+          "oklch(49.29% 0.06156 172.21)",
+          "oklch(60.71% 0.06156 172.21)",
+          "oklch(72.14% 0.06156 172.21)",
+          "oklch(83.57% 0.06156 172.21)",
+          "oklch(95.00% 0.06156 172.21)"
+        ]
+      },
+      "passed-light": {
+        "role": "secondary",
+        "displayName": "通过绿 · 浅色",
+        "tonalRamp": [
+          "oklch(15.00% 0.08639 158.56)",
+          "oklch(26.43% 0.08639 158.56)",
+          "oklch(37.86% 0.08639 158.56)",
+          "oklch(49.29% 0.08639 158.56)",
+          "oklch(60.71% 0.08639 158.56)",
+          "oklch(72.14% 0.08639 158.56)",
+          "oklch(83.57% 0.08639 158.56)",
+          "oklch(95.00% 0.08639 158.56)"
+        ]
+      },
+      "passed-dark": {
+        "role": "secondary",
+        "displayName": "通过绿 · 深色",
+        "tonalRamp": [
+          "oklch(15.00% 0.10522 155.17)",
+          "oklch(26.43% 0.10522 155.17)",
+          "oklch(37.86% 0.10522 155.17)",
+          "oklch(49.29% 0.10522 155.17)",
+          "oklch(60.71% 0.10522 155.17)",
+          "oklch(72.14% 0.10522 155.17)",
+          "oklch(83.57% 0.10522 155.17)",
+          "oklch(95.00% 0.10522 155.17)"
+        ]
+      },
+      "attention-light": {
+        "role": "secondary",
+        "displayName": "关注琥珀 · 浅色",
+        "tonalRamp": [
+          "oklch(15.00% 0.10837 69.30)",
+          "oklch(26.43% 0.10837 69.30)",
+          "oklch(37.86% 0.10837 69.30)",
+          "oklch(49.29% 0.10837 69.30)",
+          "oklch(60.71% 0.10837 69.30)",
+          "oklch(72.14% 0.10837 69.30)",
+          "oklch(83.57% 0.10837 69.30)",
+          "oklch(95.00% 0.10837 69.30)"
+        ]
+      },
+      "attention-dark": {
+        "role": "secondary",
+        "displayName": "关注琥珀 · 深色",
+        "tonalRamp": [
+          "oklch(15.00% 0.10822 82.76)",
+          "oklch(26.43% 0.10822 82.76)",
+          "oklch(37.86% 0.10822 82.76)",
+          "oklch(49.29% 0.10822 82.76)",
+          "oklch(60.71% 0.10822 82.76)",
+          "oklch(72.14% 0.10822 82.76)",
+          "oklch(83.57% 0.10822 82.76)",
+          "oklch(95.00% 0.10822 82.76)"
+        ]
+      },
+      "failed-light": {
+        "role": "secondary",
+        "displayName": "失败红 · 浅色",
+        "tonalRamp": [
+          "oklch(15.00% 0.15988 26.74)",
+          "oklch(26.43% 0.15988 26.74)",
+          "oklch(37.86% 0.15988 26.74)",
+          "oklch(49.29% 0.15988 26.74)",
+          "oklch(60.71% 0.15988 26.74)",
+          "oklch(72.14% 0.15988 26.74)",
+          "oklch(83.57% 0.15988 26.74)",
+          "oklch(95.00% 0.15988 26.74)"
+        ]
+      },
+      "failed-dark": {
+        "role": "secondary",
+        "displayName": "失败红 · 深色",
+        "tonalRamp": [
+          "oklch(15.00% 0.11566 24.48)",
+          "oklch(26.43% 0.11566 24.48)",
+          "oklch(37.86% 0.11566 24.48)",
+          "oklch(49.29% 0.11566 24.48)",
+          "oklch(60.71% 0.11566 24.48)",
+          "oklch(72.14% 0.11566 24.48)",
+          "oklch(83.57% 0.11566 24.48)",
+          "oklch(95.00% 0.11566 24.48)"
+        ]
+      },
+      "write-light": {
+        "role": "secondary",
+        "displayName": "雾蓝写入色 · 浅色",
+        "tonalRamp": [
+          "oklch(15.00% 0.06306 242.31)",
+          "oklch(26.43% 0.06306 242.31)",
+          "oklch(37.86% 0.06306 242.31)",
+          "oklch(49.29% 0.06306 242.31)",
+          "oklch(60.71% 0.06306 242.31)",
+          "oklch(72.14% 0.06306 242.31)",
+          "oklch(83.57% 0.06306 242.31)",
+          "oklch(95.00% 0.06306 242.31)"
+        ]
+      },
+      "write-dark": {
+        "role": "secondary",
+        "displayName": "雾蓝写入色 · 深色",
+        "tonalRamp": [
+          "oklch(15.00% 0.05958 242.34)",
+          "oklch(26.43% 0.05958 242.34)",
+          "oklch(37.86% 0.05958 242.34)",
+          "oklch(49.29% 0.05958 242.34)",
+          "oklch(60.71% 0.05958 242.34)",
+          "oklch(72.14% 0.05958 242.34)",
+          "oklch(83.57% 0.05958 242.34)",
+          "oklch(95.00% 0.05958 242.34)"
+        ]
+      },
+      "selected-text": {
+        "role": "neutral",
+        "displayName": "选中行文字",
+        "tonalRamp": [
+          "oklch(15.00% 0.00000 0.00)",
+          "oklch(26.43% 0.00000 0.00)",
+          "oklch(37.86% 0.00000 0.00)",
+          "oklch(49.29% 0.00000 0.00)",
+          "oklch(60.71% 0.00000 0.00)",
+          "oklch(72.14% 0.00000 0.00)",
+          "oklch(83.57% 0.00000 0.00)",
+          "oklch(95.00% 0.00000 0.00)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "metric": {
+        "displayName": "概览读数",
+        "purpose": "等宽数字；单位另以 11pt 配置。"
+      },
+      "device-title": {
+        "displayName": "设备型号",
+        "purpose": "23pt semibold，最多两行。"
+      },
+      "body": {
+        "displayName": "原生正文",
+        "purpose": "系统字体及中文回退；系统管理行高。"
+      },
+      "raw": {
+        "displayName": "原始报告",
+        "purpose": "系统等宽字体，保留原文和横向滚动。"
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "device-selection",
+        "value": "160ms ease-out",
+        "purpose": "仅 model.selectedID 变化；accessibilityReduceMotion 为 true 时设为 nil。"
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "minimum-window-width",
+        "value": "960pt"
+      },
+      {
+        "name": "default-window-width",
+        "value": "1180pt"
+      }
+    ],
+    "nativePlatform": {
+      "runtime": "SwiftUI + AppKit, macOS 14+",
+      "measurements": "AppKit logical points; preview CSS uses logical pixels for a readable illustrative equivalent.",
+      "defaultWindow": "1180×820pt",
+      "minimumWindow": "960×720pt",
+      "nativeControlPolicy": "SwiftUI supplies hover, focus, disabled styling, corner geometry and control padding; HTML previews are illustrative and do not redefine those tokens.",
+      "tonalRampPolicy": "Synthesized same-hue/chroma OKLCH strips for the documentation viewer only; they are not application palette tokens.",
+      "sourceOfTruth": [
+        "Sources/DiskApp/Views.swift",
+        "Sources/DiskApp/DeviceIdentityViews.swift",
+        "Sources/DiskApp/SMARTView.swift",
+        "Sources/DiskApp/SpeedView.swift",
+        "Sources/DiskApp/Main.swift",
+        "Sources/DiskApp/AppModel.swift",
+        "Resources/AppIcon.provenance.json",
+        "Sources/DiskCore/DeviceKnowledge.swift",
+        "Sources/DiskCore/ManufacturerCatalog.swift",
+        "Sources/DiskCore/DeviceLabel.swift",
+        "Sources/DiskCore/LabelPhotoReader.swift",
+        "Resources/ManufacturerCatalog.provenance.json"
+      ]
+    },
+    "deviceKnowledge": {
+      "version": "1.2.0",
+      "brandAssets": {
+        "sandisk": {
+          "source": "Resources/Brands/provenance.json",
+          "headerSizePt": [
+            106,
+            15
+          ],
+          "sidebarSizePt": [
+            86,
+            11
+          ],
+          "light": "official red",
+          "darkOrSelected": "official white",
+          "preserveAspectRatio": true
+        }
+      },
+      "seriesBadge": {
+        "fontSizePt": 11,
+        "weight": "medium",
+        "paddingPt": [
+          3,
+          7
+        ],
+        "radiusPt": 5,
+        "states": [
+          "设备报告"
+        ],
+        "usage": "Retained 1.1.1 measurements; unused in 1.2.0. Identity sources are muted inline text beside detail fields, with no series badge in the Model header."
+      },
+      "benchmarkPurpose": {
+        "control": "native segmented picker",
+        "maxWidthPt": 350,
+        "options": [
+          "快速检查",
+          "日常对比",
+          "较大工作集"
+        ],
+        "parameterFontSizePt": 15,
+        "parameterWeight": "semibold",
+        "parameterTabularDigits": true,
+        "scope": "Application advice, not vendor standard or proof of cache exhaustion"
+      },
+      "seriesPolicy": "The title shows only the actual device-reported Model. Product series appears only in details. Source priority: literal device report, verified official catalog rule, confirmed local photo or manual supplement. Do not infer series from product name, protocol or capacity.",
+      "identitySources": [
+        "设备报告",
+        "官方资料匹配",
+        "标签确认",
+        "手动确认"
+      ],
+      "partNumberPolicy": "A complete device-reported P/N takes display priority over confirmed local supplements. Supplements retain their own source and never rewrite the original Model or fill in missing capacity or regional codes.",
+      "officialSeriesMatches": {
+        "E82": {
+          "basis": "SANDISK App 3.4.2 (2717) products.json and the official product page",
+          "provenance": "Resources/ManufacturerCatalog.provenance.json",
+          "sourceOfTruth": "Sources/DiskCore/ManufacturerCatalog.swift",
+          "scope": "Confirms product series only, not a complete retail P/N or observed link speed.",
+          "usbID": "0781:55C8",
+          "pciTunnel": {
+            "nvmeVendorIDs": [
+              "0781",
+              "15B7"
+            ],
+            "nvmeDeviceID": "5030",
+            "ownEnclosureVendorID": "0781",
+            "ownEnclosureModelID": "55C8",
+            "requires": "Both the NVMe ID and this disk’s own USB4 enclosure ID must match."
+          }
+        },
+        "E60": {
+          "legacyUSBID": "0781:558C",
+          "catalogMatch": false,
+          "policy": "The observed old PID is absent from the verified directory. Do not automatically infer E60; show 未确认 until a literal device report or confirmed supplement establishes the series."
+        }
+      },
+      "connectionObservation": {
+        "sourceOfTruth": [
+          "Sources/DiskCore/DeviceKnowledge.swift",
+          "Sources/DiskCore/ManufacturerCatalog.swift",
+          "Sources/DiskCore/DiskService.swift"
+        ],
+        "path": [
+          "this disk’s PCI tunnel",
+          "its own USB4 enclosure UID",
+          "system_profiler current link speed for that unique UID"
+        ],
+        "policy": "Do not infer current bandwidth from a product name or catalog match. A USB disk behind a USB4 dock remains a USB disk; the dock is not the disk’s USB4 identity."
+      },
+      "labelSupplement": {
+        "sourceOfTruth": [
+          "Sources/DiskCore/DeviceLabel.swift",
+          "Sources/DiskApp/AppModel.swift"
+        ],
+        "binding": "Reliable, unique physical serial number; never a volume-only identity.",
+        "storage": "~/Library/Application Support/PortableDiskTest/device-labels.json on the Mac running the app",
+        "historyPolicy": "Separate from history.json; existing history format and associations are unchanged.",
+        "saveRefusals": [
+          "missing physical serial",
+          "duplicate physical serial",
+          "device disconnected",
+          "identity changed",
+          "scan failed",
+          "unreadable supplement archive"
+        ],
+        "otherBrands": "Manual P/N supplementation is supported.",
+        "conflictPolicy": "Explain the mismatch and require an additional explicit checkbox confirmation. Device-reported values retain priority."
+      },
+      "labelEditor": {
+        "sourceOfTruth": "Sources/DiskApp/DeviceIdentityViews.swift",
+        "widthPt": 620,
+        "heightPt": {
+          "default": 440,
+          "conflictOrUnavailableOrSaveError": 520,
+          "photoSelected": 600
+        },
+        "paddingPt": 28,
+        "target": "Actual Model, capacity and bound physical serial stay visible above the scrollable middle.",
+        "sourceLabels": "12pt medium field value with adjacent 11pt Palette.muted source text in device details; disclosure shows basis, official link and confirmed local record.",
+        "input": "Visible 完整料号 / P/N label, native roundedBorder TextField, focused on opening.",
+        "controls": "Native bordered photo action and borderedProminent save with existing Palette; Esc cancels and Return invokes the enabled default save.",
+        "footer": "Cancel, save and local source information stay outside the middle ScrollView.",
+        "saveDisabledWhen": [
+          "invalid P/N",
+          "target not editable",
+          "OCR in progress",
+          "conflict confirmation unchecked"
+        ],
+        "conflict": "Amber explanatory text and an extra confirmation checkbox; editing the P/N resets that confirmation."
+      },
+      "labelPhotoOCR": {
+        "sourceOfTruth": "Sources/DiskCore/LabelPhotoReader.swift",
+        "engine": "Local Apple Vision",
+        "fileTypes": [
+          "PNG",
+          "JPEG",
+          "HEIC",
+          "TIFF"
+        ],
+        "scope": "Complete SanDisk SDSSDE retail codes only; other brands use manual entry.",
+        "ambiguityPolicy": "Never guess O/0, I/1 or other ambiguous characters.",
+        "candidates": "One candidate fills the field for review; multiple candidates require the user to select the matching code.",
+        "savePolicy": "Only explicit 确认并保存 persists the reviewed P/N.",
+        "privacy": "Photos and serials are not uploaded. No photo copy is saved."
+      },
+      "reviewEvidence": {
+        "version": "1.2.0",
+        "machine": "Apple Silicon Mac mini, macOS 27.0.1",
+        "date": "2026-11-21",
+        "captures": [
+          {
+            "path": ".impeccable/review/identity-e82-light.png",
+            "size": "1180×820"
+          },
+          {
+            "path": ".impeccable/review/identity-e60-dark-compact.png",
+            "size": "960×720"
+          },
+          {
+            "path": ".impeccable/review/identity-editor-light.png",
+            "state": "default editor"
+          },
+          {
+            "path": ".impeccable/review/identity-editor-ocr-dark.png",
+            "state": "local OCR preview"
+          },
+          {
+            "path": ".impeccable/review/identity-editor-conflict-light.png",
+            "state": "unchecked conflict confirmation"
+          }
+        ],
+        "ocrFixture": "Explicitly marked SYNTHETIC; the example P/N was not saved to the actual user device.",
+        "shippingRaster": "None added. Existing AppIcon and official brand SVG provenance records remain in place."
+      }
+    }
+  },
+  "components": [
+    {
+      "name": "原生主操作（说明性预览）",
+      "kind": "button",
+      "description": "对应 tinted borderedProminent；实际外观和焦点由 macOS 管理。",
+      "html": "<button class=\"ds-primary\">打开 AmorphousDiskMark</button>",
+      "css": ".ds-primary{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:#246458;color:#fff;border:0;border-radius:6px;padding:6px 12px;font-weight:500;cursor:pointer}.ds-primary:hover{filter:brightness(1.08)}.ds-primary:focus-visible{outline:3px solid #246458;outline-offset:3px}.ds-primary:active{filter:brightness(.92)}.ds-primary:disabled{opacity:.45;cursor:default}@media(prefers-color-scheme:dark){.ds-primary{background:#81CBB5;color:#18211E}.ds-primary:focus-visible{outline-color:#81CBB5}}",
+      "refersTo": "button-prominent"
+    },
+    {
+      "name": "原生次操作（说明性预览）",
+      "kind": "button",
+      "description": "扫描和导出采用系统 bordered；预览不定义新的 AppKit 尺寸 token。",
+      "html": "<button class=\"ds-secondary\">重新扫描</button>",
+      "css": ".ds-secondary{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:ButtonFace;color:ButtonText;border:1px solid #DCE6E0;border-radius:6px;padding:5px 10px;cursor:pointer}.ds-secondary:hover{filter:brightness(.97)}.ds-secondary:focus-visible{outline:3px solid #246458;outline-offset:3px}.ds-secondary:active{filter:brightness(.9)}.ds-secondary:disabled{opacity:.45}@media(prefers-color-scheme:dark){.ds-secondary{border-color:#34453D}.ds-secondary:focus-visible{outline-color:#81CBB5}}"
+    },
+    {
+      "name": "SMART 搜索",
+      "kind": "input",
+      "description": "可见标签与辅助名称；搜索指标名称、当前值或说明。",
+      "html": "<label class=\"ds-search\">搜索指标 <input aria-label=\"搜索 SMART 指标\" placeholder=\"\" type=\"search\"/></label>",
+      "css": ".ds-search{font-family:system-ui,-apple-system,sans-serif;font-size:12px;display:flex;gap:10px;align-items:center;color:#50665E}.ds-search input{width:220px;font:inherit;color:CanvasText;background:Field;border:1px solid #DCE6E0;border-radius:5px;padding:4px 6px}.ds-search input:hover{border-color:#50665E}.ds-search input:focus-visible{outline:3px solid #246458;outline-offset:2px}@media(prefers-color-scheme:dark){.ds-search{color:#B0C4BA}.ds-search input{border-color:#34453D}.ds-search input:focus-visible{outline-color:#81CBB5}}",
+      "refersTo": "smart-search"
+    },
+    {
+      "name": "设备导航选中行",
+      "kind": "nav",
+      "description": "名称、容量与状态同在一行块，身份信息不随页面切换消失。",
+      "html": "<button class=\"ds-device\" aria-current=\"true\"><svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" aria-hidden=\"true\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M5 4h14l3 11v5H2v-5L5 4Z M2 15h20 M17 18h2\"/></svg><span><strong>Extreme Pro</strong><small>4.00 TB · SSD</small><small>● SMART 通过</small></span></button>",
+      "css": ".ds-device{font-family:system-ui,-apple-system,sans-serif;font-size:12px;display:flex;gap:11px;align-items:flex-start;background:#24574C;color:#fff;border:0;border-radius:12px;padding:13px;text-align:left;width:212px;cursor:pointer}.ds-device svg{margin-top:2px;width:30px;height:25px}.ds-device strong{display:block;font-size:13px;font-weight:600}.ds-device small{display:block;font-size:11px;margin-top:6px;opacity:.9}.ds-device:hover{filter:brightness(1.06)}.ds-device:focus-visible{outline:3px solid #246458;outline-offset:3px}.ds-device:active{filter:brightness(.95)}@media(prefers-color-scheme:dark){.ds-device{background:#2C6051}.ds-device:focus-visible{outline-color:#81CBB5}}",
+      "refersTo": "device-row-selected"
+    },
+    {
+      "name": "SMART 健康徽章",
+      "kind": "chip",
+      "description": "文字、状态色与图形共同传达健康；未知状态不使用通过绿。",
+      "html": "<span class=\"ds-health\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 20 20\" aria-hidden=\"true\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"10\" cy=\"10\" r=\"8\"/><path d=\"m6 10 3 3 5-6\"/></svg>检查通过</span>",
+      "css": ".ds-health{font-family:system-ui,-apple-system,sans-serif;font-size:12px;display:inline-flex;align-items:center;gap:5px;color:#286A49;background:rgba(40,106,73,.09);font-weight:500;border-radius:999px;padding:7px 11px}@media(prefers-color-scheme:dark){.ds-health{color:#87D5A3;background:rgba(135,213,163,.09)}}",
+      "refersTo": "health-passed"
+    },
+    {
+      "name": "测速准备容器",
+      "kind": "card",
+      "description": "平面色阶与留白承载准备信息，避免自定义阴影。",
+      "html": "<section class=\"ds-panel\"><h3>测速准备</h3><p><span>目标卷</span><strong>Extreme Pro</strong></p><p><span>建议参数</span><strong>3 次 · 4 GiB · MB/s</strong></p><small>打开后请手动选择目标卷和参数，再点击 All。</small></section>",
+      "css": ".ds-panel{font-family:system-ui,-apple-system,sans-serif;font-size:12px;background:#F0F5F2;color:CanvasText;border-radius:14px;padding:20px;max-width:620px}.ds-panel h3{font-size:14px;font-weight:600;margin:0 0 16px}.ds-panel p{display:flex;gap:16px;align-items:baseline;margin:16px 0}.ds-panel p span{width:58px;color:#50665E}.ds-panel strong{font-size:13px;font-weight:500;font-variant-numeric:tabular-nums}.ds-panel small{color:#50665E;font-size:12px}@media(prefers-color-scheme:dark){.ds-panel{background:#202E28}.ds-panel p span,.ds-panel small{color:#B0C4BA}}",
+      "refersTo": "preparation-panel"
+    },
+    {
+      "name": "设备信息分段选择（说明性预览）",
+      "kind": "nav",
+      "description": "原生 segmented Picker 在真实应用处理选择、焦点与键盘；预览只呈现形状。",
+      "html": "<div class=\"ds-segment\" role=\"group\" aria-label=\"设备信息分类\"><button aria-pressed=\"true\">概览</button><button aria-pressed=\"false\">SMART</button><button aria-pressed=\"false\">测速</button></div>",
+      "css": ".ds-segment{display:flex;width:294px;border:1px solid #DCE6E0;border-radius:6px;overflow:visible;background:ButtonFace}.ds-segment button{font-family:system-ui,-apple-system,sans-serif;font-size:12px;flex:1;border:0;background:transparent;color:ButtonText;padding:4px 12px;border-radius:5px;cursor:pointer}.ds-segment button[aria-pressed=\"true\"]{background:rgba(80,102,94,.14)}.ds-segment button:hover{background:rgba(80,102,94,.1)}.ds-segment button:focus-visible{outline:3px solid #246458;outline-offset:2px}.ds-segment button:active{filter:brightness(.9)}@media(prefers-color-scheme:dark){.ds-segment{border-color:#34453D}.ds-segment button:focus-visible{outline-color:#81CBB5}}"
+    },
+    {
+      "name": "空间容量轨",
+      "kind": "custom",
+      "description": "文字提供可访问的已用与可用容量；轨道只显示真实比例。",
+      "html": "<section class=\"ds-volume\"><div><strong>Extreme Pro</strong><span>4.00 TB</span></div><div class=\"ds-volume-track\" role=\"img\" aria-label=\"已用 1.00 TB，可用 3.00 TB\"><i></i></div><small>已用 1.00 TB · 可用 3.00 TB</small></section>",
+      "css": ".ds-volume{font-family:system-ui,-apple-system,sans-serif;font-size:12px;color:CanvasText;max-width:620px}.ds-volume>div:first-child{display:flex;justify-content:space-between;margin-bottom:9px;font-variant-numeric:tabular-nums}.ds-volume strong{font-weight:500}.ds-volume-track{height:6px;border-radius:3px;background:#DCE6E0;overflow:hidden}.ds-volume-track i{display:block;height:100%;width:25%;border-radius:3px;background:#246458}.ds-volume small{display:block;margin-top:9px;font-size:11px;color:#50665E}@media(prefers-color-scheme:dark){.ds-volume-track{background:#34453D}.ds-volume-track i{background:#81CBB5}.ds-volume small{color:#B0C4BA}}"
+    },
+    {
+      "name": "测速读写成绩",
+      "kind": "custom",
+      "description": "读写各有标题、数值和颜色；长度相对同份成绩最大值，示例数字不是设备指标。",
+      "html": "<div class=\"ds-benchmark\" aria-label=\"示例成绩，读取 1000.00 MB/s，写入 800.00 MB/s\"><strong>SEQ1M<br><small>QD 8</small></strong><div><small>读取 MB/s</small><b>1000.00</b><i class=\"ds-read\"></i></div><div><small>写入 MB/s</small><b>800.00</b><i class=\"ds-write\"></i></div></div>",
+      "css": ".ds-benchmark{font-family:system-ui,-apple-system,sans-serif;font-size:12px;display:flex;gap:16px;color:CanvasText;border-bottom:1px solid #DCE6E0;padding:12px 0;max-width:620px}.ds-benchmark>strong{font-weight:500;width:129px}.ds-benchmark>div{flex:1}.ds-benchmark small{font-size:11px;color:#50665E}.ds-benchmark b{display:block;font-size:21px;font-weight:600;font-variant-numeric:tabular-nums;margin:7px 0}.ds-benchmark i{display:block;height:4px;border-radius:2px}.ds-read{background:#246458;width:100%}.ds-write{background:#486E8B;width:80%}@media(prefers-color-scheme:dark){.ds-benchmark{border-color:#34453D}.ds-benchmark small{color:#B0C4BA}.ds-read{background:#81CBB5}.ds-write{background:#91B7D5}}"
+    }
+  ],
+  "narrative": {
+    "northStar": "森林步道导览",
+    "overview": "松绿、石白和有秩序的数据层级，形成适合长时间查看的原生 Mac 工具。稳定的设备身份是路径标记；概览、SMART 与测速是同一台设备的三个观察层次。界面以紧凑、清楚和舒适为准，不将设备检查包装成虚构分数。\n\n本文件从已实现的 SwiftUI / AppKit 应用提取。主要依据是 `Sources/DiskApp/Views.swift`、`DeviceIdentityViews.swift`、`SMARTView.swift`、`SpeedView.swift`、`Main.swift` 与 `AppModel.swift`，并核对桌面及深色捕获。前言中的尺寸使用 macOS 逻辑点（pt），不是屏幕物理像素；字体由系统及中文回退字体解析。系统控件的边框、焦点和禁用外观由 macOS 管理，不虚构其固定色值。",
+    "keyCharacteristics": [
+      "深浅色成对的松绿表面，少量蓝色区分测速写入。",
+      "原生双栏、分段选择、按钮与渐进披露；数据区保持平面。",
+      "等宽数字配合明确单位、来源与缺失状态。",
+      "多盘身份持续可见，历史与测速成绩只关联可靠身份。"
+    ],
+    "rules": [
+      {
+        "name": "The Semantic State Rule",
+        "body": "状态色必须跟随真实状态；选中设备和测速的强调色不得被解读为健康通过。异常、未提供及部分读取始终附带文字解释。",
+        "section": "colors"
+      },
+      {
+        "name": "The Measured Number Rule",
+        "body": "测量值使用等宽数字与真实单位。未知值显示 `—` 或“未提供”，不以零占位；厂商原始值不改写为健康百分比。",
+        "section": "typography"
+      },
+      {
+        "name": "The Quiet Surface Rule",
+        "body": "数据面板保持平面；通过语义色阶与清晰对齐建立层次，保留系统控件自己的深度反馈。",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** 成对维护深浅色语义，保留系统 `.primary` 正文与原生焦点反馈。",
+      "**Do** 让设备身份、数据时间、单位与具体读取限制始终可查。",
+      "**Do** 让状态同时有文字与图形，测量值使用等宽数字。",
+      "**Do** 在保存测速成绩前保留目标设备确认，并只关联可靠身份。",
+      "**Do** 尊重系统减少动态效果，保持原生键盘与 VoiceOver 语义。"
+    ],
+    "donts": [
+      "**Don't** 编造健康总分、接口速率、寿命结论或缺失指标；未知值不填零。",
+      "**Don't** 把 USB4 产品名当作已观测连接，或把历史断电计数直接标为故障。",
+      "**Don't** 在身份不可靠时跨会话保存，或静默猜测测速成绩属于哪块盘。",
+      "**Don't** 将打开第三方测速工具写成已经启动测试；应用不会自动写入硬盘。",
+      "**Don't** 给平面数据区增加自定义投影、装饰动画或非原生展示字体。"
+    ]
+  }
+}

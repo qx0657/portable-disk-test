@@ -1,0 +1,23 @@
+{
+  "purpose": "Product family corroboration only; never manufactures a retail part number",
+  "verified_at": "2026-11-20",
+  "verified_on": "Apple Silicon Mac mini, macOS 27.0.1",
+  "publisher": "Sandisk",
+  "application_version": "3.4.2 (2717)",
+  "download_url": "https://downloads.sandisk.com/downloads/sandiskapp-mac.dmg",
+  "dmg_sha256": "84d8ffd0846e6c5e45577938e07d6e69f884570fd21fe5c622b369f9f85dd470",
+  "catalog_path": "SANDISK.app/Contents/Frameworks/App.framework/Versions/A/Resources/flutter_assets/packages/sandisk_products/assets/products.json",
+  "catalog_id": "ssd-extreme-pro-porter",
+  "catalog_name": "Extreme PRO with USB4",
+  "usb_ids": [
+    "0781:55C8"
+  ],
+  "nvme_ids": [
+    "0781:5030",
+    "15B7:5030"
+  ],
+  "implementation_constraint": "PCIe mode additionally requires the matched disk's own USB4 tunnel enclosure IDs 0781:55C8. Unknown or ambiguous devices receive no family match.",
+  "series": "E82",
+  "series_reference": "https://www.sandisk.com/products/ssd/external-ssd/sandisk-extreme-pro-usb-4-portable-ssd",
+  "unmatched_usb_id": "0781:558C: no official catalog entry found; E60 is not inferred"
+}

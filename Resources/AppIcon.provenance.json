@@ -1,0 +1,7 @@
+{
+  "asset": "AppIcon.icns",
+  "origin": "Original geometric artwork authored in scripts/make-icon.swift",
+  "method": "AppKit vector paths rendered at native icon sizes; iconutil packages the resulting iconset",
+  "recipe": "Pine-green rounded square, a pale external SSD body, a recessed connector and status indicator. No stock imagery or generated bitmap reference.",
+  "source": "scripts/make-icon.swift"
+}
