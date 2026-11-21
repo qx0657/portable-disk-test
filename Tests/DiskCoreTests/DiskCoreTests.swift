@@ -3,12 +3,89 @@ import DiskCore
 import CoreGraphics
 import CoreText
 import ImageIO
+import DiskArbitration
 
 struct DiskCoreTests {
     func fixture(_ name: String) throws -> Data {
         try Data(contentsOf: require(Bundle.module.url(forResource: name, withExtension: "json", subdirectory: "Fixtures")))
     }
     func json(_ object: [String: Any]) throws -> Data { try JSONSerialization.data(withJSONObject: object) }
+
+    func testEjectionRejectsInternalVirtualPartitionAndUnknownTargets() throws {
+        let target = DiskEjectTarget(deviceID: "disk42", registryID: 1234)
+        try target.validate(deviceID: "disk42", registryID: 1234, internalDisk: false, wholeDisk: true, physical: true)
+        checkThrows(try target.validate(deviceID: "disk42", registryID: 1234, internalDisk: true, wholeDisk: true, physical: true))
+        checkThrows(try target.validate(deviceID: "disk42", registryID: 1234, internalDisk: nil, wholeDisk: true, physical: true))
+        checkThrows(try target.validate(deviceID: "disk42", registryID: 1234, internalDisk: false, wholeDisk: false, physical: true))
+        checkThrows(try target.validate(deviceID: "disk42", registryID: 1234, internalDisk: false, wholeDisk: nil, physical: true))
+        checkThrows(try target.validate(deviceID: "disk42", registryID: 1234, internalDisk: false, wholeDisk: true, physical: false))
+        for id in ["disk42s1", "/dev/disk42", "disk42;echo", ""] {
+            checkThrows(try DiskEjectTarget(deviceID: id, registryID: 1234).validate(deviceID: id, registryID: 1234,
+                internalDisk: false, wholeDisk: true, physical: true))
+        }
+    }
+    func testEjectionRejectsReusedDeviceNumbersAndReconnectedMedia() {
+        let target = DiskEjectTarget(deviceID: "disk42", registryID: 1234)
+        checkThrows(try target.validate(deviceID: "disk42", registryID: 5678, internalDisk: false, wholeDisk: true, physical: true))
+        checkThrows(try target.validate(deviceID: "disk43", registryID: 1234, internalDisk: false, wholeDisk: true, physical: true))
+        checkThrows(try DiskEjectTarget(deviceID: "disk42", registryID: 0).validate(deviceID: "disk42", registryID: 0,
+            internalDisk: false, wholeDisk: true, physical: true))
+        checkNil(DiskEjector.registryID(for: "disk42;echo"))
+    }
+    func testBusyUnmountStopsBeforeEjectAndEjectFailurePropagates() {
+        let finished = DispatchSemaphore(value: 0)
+        Task.detached {
+        defer { finished.signal() }
+        let busy = EjectionSpy(unmountError: .busy)
+        do { try await DiskEjector.perform(using: busy); checkTrue(false) }
+        catch { checkEqual(error as? DiskEjectError, .busy) }
+        checkEqual(await busy.events, ["unmountWholeDisk"])
+        let failed = EjectionSpy(ejectError: .denied)
+        do { try await DiskEjector.perform(using: failed); checkTrue(false) }
+        catch { checkEqual(error as? DiskEjectError, .denied) }
+        checkEqual(await failed.events, ["unmountWholeDisk", "ejectDisk"])
+        let success = EjectionSpy()
+        do { try await DiskEjector.perform(using: success) }
+        catch { checkTrue(false) }
+        checkEqual(await success.events, ["unmountWholeDisk", "ejectDisk"])
+        }
+        checkEqual(finished.wait(timeout: .now() + 10), .success)
+    }
+    func testEjectionDistinguishesBusyPermissionAndMissingDevice() {
+        checkEqual(DiskEjectError.from(status: Int32(truncatingIfNeeded: kDAReturnBusy)), .busy)
+        checkEqual(DiskEjectError.from(status: Int32(truncatingIfNeeded: kDAReturnExclusiveAccess)), .busy)
+        checkEqual(DiskEjectError.from(status: Int32(truncatingIfNeeded: kDAReturnNotPrivileged)), .denied)
+        checkEqual(DiskEjectError.from(status: Int32(truncatingIfNeeded: kDAReturnNotPermitted)), .denied)
+        checkEqual(DiskEjectError.from(status: Int32(truncatingIfNeeded: kDAReturnNotFound)), .changed)
+        checkEqual(DiskEjectError.from(status: 123), .system(123))
+    }
+    func testEjectionPermissionExpiresOnMountReconnectionOrUnknownDiscovery() {
+        var receipt = DiskEjectionReceipt(targetRegistryID: 1234, otherConnectedRegistryIDs: [1, 2])
+        receipt.reconcile(connectedRegistryIDs: [1, 2]); checkTrue(receipt.isValid)
+        receipt.reconcile(connectedRegistryIDs: [1]); checkTrue(receipt.isValid)
+        // Same physical drive reconnected with a new IOMedia entry.
+        receipt.reconcile(connectedRegistryIDs: [1, 5678]); checkFalse(receipt.isValid)
+        receipt.reconcile(connectedRegistryIDs: [1]); checkFalse(receipt.isValid) // Never resurrect an old permission.
+        var remounted = DiskEjectionReceipt(targetRegistryID: 1234, otherConnectedRegistryIDs: [1])
+        remounted.reconcile(connectedRegistryIDs: [1, 1234]); checkFalse(remounted.isValid)
+        var mountEvent = DiskEjectionReceipt(targetRegistryID: 1234, otherConnectedRegistryIDs: [1])
+        mountEvent.reconcile(connectedRegistryIDs: nil); checkFalse(mountEvent.isValid)
+        mountEvent.reconcile(connectedRegistryIDs: [1]); checkFalse(mountEvent.isValid)
+    }
+    func testSessionMediaIdentityDoesNotChangePersistentHistoryAndIsOptionalWhenDecoding() throws {
+        var disk = makeDisk("disk42", serial: "SYNTHETIC-EJECT")
+        let identity = disk.persistentIdentity
+        disk.mediaRegistryID = 1234
+        let data = try JSONEncoder().encode(disk)
+        checkEqual(try JSONDecoder().decode(DiskDevice.self, from: data).mediaRegistryID, 1234)
+        var old = try require(JSONSerialization.jsonObject(with: data) as? [String: Any])
+        old.removeValue(forKey: "mediaRegistryID")
+        let restored = try JSONDecoder().decode(DiskDevice.self, from: json(old))
+        checkNil(restored.mediaRegistryID)
+        checkEqual(restored.persistentIdentity, identity)
+        disk.id = "disk43"; disk.mediaRegistryID = 5678
+        checkEqual(disk.persistentIdentity, identity)
+    }
 
     func testRealNVMeFixtureAndStandardUnits() throws {
         let result = SMARTParser.parse(try fixture("e82"))
@@ -461,6 +538,16 @@ private enum Checks {
     }
 }
 private struct CheckFailure: Error {}
+private actor EjectionSpy: DiskEjectionDriver {
+    var events: [String] = []
+    let unmountError: DiskEjectError?
+    let ejectError: DiskEjectError?
+    init(unmountError: DiskEjectError? = nil, ejectError: DiskEjectError? = nil) {
+        self.unmountError = unmountError; self.ejectError = ejectError
+    }
+    func unmountWholeDisk() throws { events.append("unmountWholeDisk"); if let unmountError { throw unmountError } }
+    func ejectDisk() throws { events.append("ejectDisk"); if let ejectError { throw ejectError } }
+}
 private func checkEqual<T: Equatable>(_ a: T, _ b: T, file: StaticString = #filePath, line: UInt = #line) { Checks.record(a == b, "\(a) != \(b)", file: file, line: line) }
 private func checkNotEqual<T: Equatable>(_ a: T, _ b: T, file: StaticString = #filePath, line: UInt = #line) { Checks.record(a != b, "Values unexpectedly equal", file: file, line: line) }
 private func checkTrue(_ value: Bool, file: StaticString = #filePath, line: UInt = #line) { Checks.record(value, "Expected true", file: file, line: line) }
@@ -478,6 +565,12 @@ private func checkThrows<T>(_ expression: @autoclosure () throws -> T, file: Sta
     static func main() {
         let suite = DiskCoreTests()
         let cases: [(String, () throws -> Void)] = [
+            ("testEjectionRejectsInternalVirtualPartitionAndUnknownTargets", suite.testEjectionRejectsInternalVirtualPartitionAndUnknownTargets),
+            ("testEjectionRejectsReusedDeviceNumbersAndReconnectedMedia", suite.testEjectionRejectsReusedDeviceNumbersAndReconnectedMedia),
+            ("testBusyUnmountStopsBeforeEjectAndEjectFailurePropagates", suite.testBusyUnmountStopsBeforeEjectAndEjectFailurePropagates),
+            ("testEjectionDistinguishesBusyPermissionAndMissingDevice", suite.testEjectionDistinguishesBusyPermissionAndMissingDevice),
+            ("testEjectionPermissionExpiresOnMountReconnectionOrUnknownDiscovery", suite.testEjectionPermissionExpiresOnMountReconnectionOrUnknownDiscovery),
+            ("testSessionMediaIdentityDoesNotChangePersistentHistoryAndIsOptionalWhenDecoding", suite.testSessionMediaIdentityDoesNotChangePersistentHistoryAndIsOptionalWhenDecoding),
             ("testRealNVMeFixtureAndStandardUnits", suite.testRealNVMeFixtureAndStandardUnits),
             ("testRealATAFixturePartialLogsAreNotHealthFailure", suite.testRealATAFixturePartialLogsAreNotHealthFailure),
             ("testMissingMetricsDoNotBecomeZeroOrHealthy", suite.testMissingMetricsDoNotBecomeZeroOrHealthy),

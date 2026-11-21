@@ -41,13 +41,17 @@ struct MainView: View {
                 Spacer()
                 if model.isRefreshing { ProgressView().controlSize(.small).accessibilityLabel("正在读取硬盘") }
                 Button { Task { await model.refresh(force: true) } } label: { Label("重新扫描", systemImage: "arrow.clockwise") }
-                    .keyboardShortcut("r", modifiers: .command).disabled(model.isRefreshing)
+                    .keyboardShortcut("r", modifiers: .command).disabled(model.isRefreshing || model.ejectingDisk != nil)
                 Button { if let disk = model.selected { model.export(disk) } } label: { Label("导出报告", systemImage: "square.and.arrow.up") }
-                    .keyboardShortcut("e", modifiers: .command).disabled(model.selected == nil)
+                    .keyboardShortcut("e", modifiers: [.command, .shift]).disabled(model.selected == nil || model.ejectingDisk != nil)
+                Button { if let disk = model.selected { model.requestEject(disk) } } label: { Label("安全推出", systemImage: "eject") }
+                    .keyboardShortcut("e", modifiers: .command).disabled(!model.canEject)
+                    .help(model.selected.map { "推出“\($0.displayName)”的全部卷，成功后再拔线" } ?? "请先选择一块外接硬盘")
             }
             .controlSize(.regular).buttonStyle(.bordered)
             .padding(.leading, 92).padding(.trailing, 22).frame(height: 56)
             Divider().overlay(Palette.line)
+            if model.ejectingDisk != nil || model.ejectionFeedback != nil { ejectionStatus }
             HStack(spacing: 0) {
                 sidebar.frame(width: 232)
                 Rectangle().fill(Palette.line).frame(width: 1)
@@ -58,7 +62,7 @@ struct MainView: View {
                             .frame(maxWidth: .infinity, alignment: .leading).padding(12).background(Palette.panel)
                     }
                     if let disk = model.selected {
-                        DeviceDetail(disk: disk).id(disk.identity)
+                        DeviceDetail(disk: disk).id(disk.identity).disabled(model.ejectingDisk != nil)
                     } else if !model.hasScanned {
                         VStack(spacing: 18) { ProgressView(); Text("正在发现外接硬盘…").foregroundStyle(Palette.muted) }.frame(maxWidth: .infinity, maxHeight: .infinity)
                     } else {
@@ -77,9 +81,57 @@ struct MainView: View {
         .animation(reducedMotion ? nil : .easeOut(duration: 0.16), value: model.selectedID)
         .sheet(item: $model.importCandidate) { result in ImportSheet(result: result).environmentObject(model) }
         .sheet(item: $model.labelEditor) { target in DeviceLabelEditor(target: target).environmentObject(model) }
+        .sheet(item: $model.ejectConfirmation) { disk in
+            VStack(alignment: .leading, spacing: 16) {
+                Label("推出整块硬盘？", systemImage: "eject").font(.system(size: 20, weight: .semibold))
+                Text("\(disk.displayName) · \(DiskFormat.bytes(disk.capacity)) · /dev/\(disk.id)").font(.system(size: 13, weight: .medium))
+                Text("以下已挂载的卷会一起推出。请先结束复制、备份和测速，并关闭使用这些卷的文件。")
+                    .font(.system(size: 12)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true)
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 8) {
+                        ForEach(disk.volumes.filter { $0.mountPoint != nil }) { volume in
+                            Label(volume.name, systemImage: "externaldrive").font(.system(size: 13)).textSelection(.enabled)
+                        }
+                    }.frame(maxWidth: .infinity, alignment: .leading)
+                }.frame(maxHeight: 140)
+                HStack {
+                    Spacer()
+                    Button("取消", role: .cancel) { model.ejectConfirmation = nil }.keyboardShortcut(.cancelAction)
+                    Button("推出整块硬盘") {
+                        model.ejectConfirmation = nil
+                        Task { await model.eject(disk) }
+                    }.buttonStyle(.borderedProminent).keyboardShortcut(.defaultAction)
+                }
+            }.padding(28).frame(width: 460).background(Palette.ground).tint(Palette.accent)
+        }
         .alert("移动硬盘测试", isPresented: Binding(get: { model.notice != nil }, set: { if !$0 { model.notice = nil } })) {
             Button("好", role: .cancel) { model.notice = nil }
         } message: { Text(model.notice ?? "") }
+    }
+    private var ejectionStatus: some View {
+        HStack(spacing: 12) {
+            if let disk = model.ejectingDisk {
+                ProgressView().controlSize(.small)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("正在安全推出“\(disk.displayName)”…").font(.system(size: 13, weight: .semibold))
+                    Text(model.ejectionIsSlow ? "仍在等待系统完成推出，请勿拔线。" : "请勿拔线；本软件已暂停扫描，正在等待系统完成。")
+                        .font(.system(size: 12)).foregroundStyle(Palette.muted)
+                }
+                Spacer(minLength: 0)
+            } else if let feedback = model.ejectionFeedback {
+                Image(systemName: feedback.failed ? "exclamationmark.triangle" : "checkmark.circle")
+                    .foregroundStyle(Palette.health(feedback.failed ? .attention : .passed))
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(feedback.title).font(.system(size: 13, weight: .semibold))
+                    Text(feedback.message).font(.system(size: 12)).foregroundStyle(Palette.muted)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Spacer(minLength: 4)
+                Button { model.ejectionFeedback = nil } label: { Image(systemName: "xmark") }
+                    .buttonStyle(.plain).accessibilityLabel("关闭推出提示").help("关闭提示")
+            }
+        }.padding(.horizontal, 22).padding(.vertical, 12).frame(maxWidth: .infinity, alignment: .leading)
+            .background(Palette.panel).accessibilityElement(children: .contain)
     }
     private var sidebar: some View {
         VStack(alignment: .leading, spacing: 0) {

@@ -78,6 +78,8 @@ public struct DiskDevice: Identifiable, Codable, Sendable {
     public var volumes: [DiskVolume]
     public var snapshot: SMARTSnapshot
     public var hardware: HardwareIdentity?
+    // IOMedia session identity; never use a reused BSD disk number to authorize eject.
+    public var mediaRegistryID: UInt64?
     public var identityAmbiguous = false
     public var persistentIdentity: String? {
         guard !identityAmbiguous else { return nil }

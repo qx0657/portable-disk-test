@@ -77,11 +77,13 @@ public struct DiskService: Sendable {
         }
         return Array(Set(result)).sorted()
     }
-    public func scan(cached: [DiskDevice] = [], force: Bool = false) throws -> [DiskDevice] {
+    public func scan(cached: [DiskDevice] = [], force: Bool = false, excluding registryIDs: Set<UInt64> = []) throws -> [DiskDevice] {
         let list = try plist(["list", "-plist", "external", "physical"])
         var found: [DiskDevice] = []
         for disk in list.array("AllDisksAndPartitions") {
             guard let id = disk.string("DeviceIdentifier"), Self.validDeviceID(id),
+                  let registryID = DiskEjector.registryID(for: id),
+                  !registryIDs.contains(registryID),
                   let info = try? plist(["info", "-plist", id]),
                   info["Internal"] as? Bool == false,
                   info["WholeDisk"] as? Bool == true,
@@ -112,7 +114,7 @@ public struct DiskService: Sendable {
                            writable: v["WritableVolume"] as? Bool ?? v["Writable"] as? Bool ?? false)
             }.sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
             let capacity = info.number("Size") ?? disk.number("Size") ?? 0
-            let old = cached.first { $0.id == id && $0.mediaName == media && $0.capacity == capacity &&
+            let old = cached.first { $0.id == id && $0.mediaRegistryID == registryID && $0.mediaName == media && $0.capacity == capacity &&
                 $0.volumes.compactMap(\.uuid).sorted() == volumes.compactMap(\.uuid).sorted() }
             let snapshot: SMARTSnapshot
             if !force, let old, Date().timeIntervalSince(old.snapshot.date) < 30 {
@@ -143,6 +145,8 @@ public struct DiskService: Sendable {
                                     partitionMap: info.string("Content") ?? disk.string("Content") ?? "未提供",
                                     volumes: volumes, snapshot: snapshot)
             device.hardware = HardwareIdentity.read(deviceID: id)
+            guard DiskEjector.registryID(for: id) == registryID else { continue }
+            device.mediaRegistryID = registryID
             found.append(device)
         }
         let needsLinkRead = found.contains { disk in

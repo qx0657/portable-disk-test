@@ -77,6 +77,7 @@ mkdir -p work
 | `--page=smart` / `--page=speed` | 选择功能页 |
 | `--device=diskN` | 捕获时选择当前发现的设备号 |
 | `--purpose=quick` / `--purpose=large` | 捕获时选择测速目的 |
+| `--eject-preview=ready/pending/busy/success/multiple/stale/reconnected` | 仅捕获模式中预览合成设备的推出状态；不执行卸载 |
 | `--empty-preview` | 捕获时预览无设备状态 |
 | `--import-preview=/absolute/result.txt` | 捕获时预览文字成绩确认 sheet |
 | `--label-editor-preview` | 捕获时预览料号补充 sheet |
@@ -114,3 +115,12 @@ Git 源码发布与二进制 Release 是不同动作。提交前查看暂存文�
 - 更改用户数据结构时保留旧记录并提供兼容处理；读入损坏文件不能默默覆盖。
 - 更改 smartmontools 版本时同步源码 URL、SHA-256、构建参数和 [第三方说明](../THIRD_PARTY_NOTICES.md)。
 - 厂商品牌标识保留原始资源与来源；不使用品牌 Logo 作为本应用的身份或暗示背书。
+
+
+## 推出功能验证
+
+独立检查覆盖内置 / 虚拟 / 分区目标拒绝、设备号复用、重连后的 registry ID 变化、先卸载再推出、占用时禁止继续、权限与错误分类，成功提示在重连 / 挂载 / 未知状态后失效，以及旧设备数据缺省 registry ID 的解码兼容。模拟驱动不访问实盘。
+
+界面捕获使用 `--capture=... --eject-preview=...`，覆盖可用按钮、进行中、占用、成功、多卷确认及扫描失败状态。合成状态只在捕获模式中生成，不保存记录；捕获模式的实际推出入口也会拒绝执行。检查深浅色、1180×820 与 960×720、⌘E / ⇧⌘E 菜单映射和确认窗口 Esc / Return。
+
+实盘可用 `DiskEjector.validate` 执行只读准备检查，核对 macOS 的外接 / 整盘 / Physical 属性。真正的推出与占用验收须先有针对目标盘的操作授权，不能为了测试卸载用户正在使用的硬盘。UI 中的推出与其他软件的复制、测速之间没有私有协调接口，最终是否占用由 macOS 决定。

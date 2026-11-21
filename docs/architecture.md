@@ -8,7 +8,7 @@
 | --- | --- |
 | DiskApp | SwiftUI / AppKit 窗口、菜单、用户确认、导出及本地应用状态 |
 | DiskCore | 设备模型、发现、SMART 解析、身份与型号策略、OCR、成绩解析和报告 |
-| macOS | `diskutil`、IOKit、`system_profiler`、Vision、应用打开和文件选择 |
+| macOS | `diskutil`、IOKit、`system_profiler`、Disk Arbitration、Vision、应用打开和文件选择 |
 | smartctl | 独立读取组件，提供 ATA / NVMe 原始数据 |
 | AmorphousDiskMark | 独立的外部测速应用，由用户手动开始测速 |
 
@@ -32,6 +32,16 @@ flowchart LR
 `AppModel` 监听挂载 / 卸载事件，并默认约每 3 秒检查设备。SMART 结果缓存约 30 秒，强制重新扫描会重读。扫描失败时保留上次数据并明确提示，不能把失败当成所有设备均已拔出。
 
 `CommandRunner` 以可执行文件和参数数组启动进程，分别读取标准输出与错误，设置超时。不要把设备路径或用户输入拼接成 shell 命令。
+
+## 用户主动推出
+
+`DiskEjector` 使用原生 Disk Arbitration：`DADiskUnmount` 的 Whole 选项正常卸载整盘的卷，成功后调用 `DADiskEject`。不设置 Force。占用时不继续 eject；只有最终 eject 回调成功才提示可以拔线。卸载已经完成但 eject 失败时，仍按失败处理并重新扫描当前状态，不自动重新挂载。
+
+发现时保存 IOMedia registry entry ID，仅用于当前连接。准备操作时根据该 ID 创建 DADisk，对照外接 / 整盘属性及 diskutil 的 Physical 标记，再核对 BSD 名和当前 registry ID。设备号被复用、拔插或属性未知时拒绝操作。DADisk 始终绑定当次 IOMedia，不在操作中重新按卷名或设备号寻找目标。无 SMART 序列号不影响推出；registry ID 不参与本地历史绑定。
+
+`AppModel` 在推出期间阻止新扫描，并等待现有扫描完成再操作；跳过的挂载事件在结束后补扫。成功后从列表移除这次连接，后续采集排除其 registry ID；重新插入的新 registry ID 正常发现。成功反馈带 `DiskEjectionReceipt`，绑定目标 registry ID 和当时其他已连接设备的集合；重新挂载、新连接或发现失败会撤销旧提示，失效后不会复活。挂载事件会解除采集排除，以支持其他软件在同一 IOMedia 上重新挂载。失败保留明确提示，不把超时等待、部分卸载或设备从列表消失当成成功。
+
+`DiskEjector.validate` 仅创建并校验原生目标，不执行卸载或推出，可用于只读诊断。检查通过不能保证稍后不会被其他软件占用。
 
 ## SMART 的归一化
 

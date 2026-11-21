@@ -15,6 +15,13 @@ struct LabelEditorTarget: Identifiable {
     init(disk: DiskDevice) { self.disk = disk; identity = disk.labelIdentity }
 }
 
+struct EjectionFeedback {
+    let title: String
+    let message: String
+    let failed: Bool
+    var receipt: DiskEjectionReceipt? = nil
+}
+
 @MainActor final class AppModel: ObservableObject {
     @Published var devices: [DiskDevice] = []
     @Published var selectedID: String?
@@ -24,6 +31,10 @@ struct LabelEditorTarget: Identifiable {
     @Published var hasScanned = false
     @Published var discoveryError: String?
     @Published var notice: String?
+    @Published var ejectingDisk: DiskDevice?
+    @Published var ejectConfirmation: DiskDevice?
+    @Published var ejectionFeedback: EjectionFeedback?
+    @Published var ejectionIsSlow = false
     @Published var importCandidate: BenchmarkResult?
     @Published var records: [String: DeviceRecord] = [:]
     @Published var historyError: String?
@@ -36,6 +47,7 @@ struct LabelEditorTarget: Identifiable {
     }
     let service: DiskService
     private var scanning = false
+    private var ejectedMediaIDs = Set<UInt64>()
     private var monitor: Task<Void, Never>?
     private var observers: [NSObjectProtocol] = []
     private let historyURL: URL
@@ -63,8 +75,16 @@ struct LabelEditorTarget: Identifiable {
     func start() {
         guard monitor == nil else { return }
         for event in [NSWorkspace.didMountNotification, NSWorkspace.didUnmountNotification] {
-            observers.append(NSWorkspace.shared.notificationCenter.addObserver(forName: event, object: nil, queue: .main) { [weak self] _ in
-                Task { @MainActor in await self?.refresh(force: true, showProgress: false) }
+            observers.append(NSWorkspace.shared.notificationCenter.addObserver(forName: event, object: nil, queue: .main) { [weak self] notification in
+                let mounted = notification.name == NSWorkspace.didMountNotification
+                Task { @MainActor in
+                    if mounted {
+                        self?.reconcileEjectionFeedback(with: nil)
+                        // A user or another tool may mount the same IOMedia without a physical replug.
+                        self?.ejectedMediaIDs.removeAll()
+                    }
+                    await self?.refresh(force: true, showProgress: false)
+                }
             })
         }
         monitor = Task { [weak self] in
@@ -77,13 +97,14 @@ struct LabelEditorTarget: Identifiable {
         }
     }
     func refresh(force: Bool, showProgress: Bool = true) async {
-        guard !scanning else { return }
+        guard !scanning, ejectingDisk == nil else { return }
         scanning = true
         if showProgress { isRefreshing = true }
         defer { scanning = false; isRefreshing = false; hasScanned = true }
-        let cached = devices, service = service
+        let cached = devices, service = service, excluded = ejectedMediaIDs
         do {
-            let result = try await Task.detached(priority: .utility) { try service.scan(cached: cached, force: force) }.value
+            let result = try await Task.detached(priority: .utility) { try service.scan(cached: cached, force: force, excluding: excluded) }.value
+            reconcileEjectionFeedback(with: Set(result.compactMap(\.mediaRegistryID)))
             devices = result; discoveryError = nil
             if !result.contains(where: { $0.id == selectedID }) { selectedID = result.first?.id }
             var changed = false
@@ -101,7 +122,48 @@ struct LabelEditorTarget: Identifiable {
         } catch {
             // 发现失败时保留上次数据，并明确标记为旧数据；不把空结果当成设备全拔出。
             discoveryError = error.localizedDescription
+            reconcileEjectionFeedback(with: nil)
         }
+    }
+    func reconcileEjectionFeedback(with registryIDs: Set<UInt64>?) {
+        guard var feedback = ejectionFeedback, var receipt = feedback.receipt else { return }
+        receipt.reconcile(connectedRegistryIDs: registryIDs)
+        if !receipt.isValid { ejectionFeedback = nil }
+        else { feedback.receipt = receipt; ejectionFeedback = feedback }
+    }
+    var canEject: Bool {
+        selected?.mediaRegistryID != nil && ejectingDisk == nil && discoveryError == nil && !isRefreshing
+    }
+    func requestEject(_ disk: DiskDevice) {
+        guard ejectingDisk == nil, discoveryError == nil else { return }
+        if disk.volumes.filter({ $0.mountPoint != nil }).count > 1 { ejectConfirmation = disk }
+        else { Task { await eject(disk) } }
+    }
+    func eject(_ target: DiskDevice) async {
+        // Diagnostic previews must never unmount real user volumes.
+        guard !ProcessInfo.processInfo.arguments.contains(where: { $0.hasPrefix("--capture=") }), ejectingDisk == nil else { return }
+        ejectingDisk = target; ejectionFeedback = nil; ejectionIsSlow = false
+        let slowNotice = Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 12_000_000_000)
+            if !Task.isCancelled { ejectionIsSlow = true }
+        }
+        do {
+            // Let in-flight SMART readers close before requesting the system unmount.
+            while scanning { try await Task.sleep(nanoseconds: 100_000_000) }
+            guard discoveryError == nil, let id = target.mediaRegistryID,
+                  devices.contains(where: { $0.id == target.id && $0.mediaRegistryID == id }) else { throw DiskEjectError.changed }
+            try await DiskEjector.eject(target)
+            ejectedMediaIDs.insert(id)
+            devices.removeAll { $0.mediaRegistryID == id }
+            if selectedID == target.id { selectedID = devices.first?.id }
+            ejectionFeedback = EjectionFeedback(title: "已安全推出“\(target.displayName)”", message: "现在可以拔下这块硬盘的连接线。", failed: false,
+                receipt: DiskEjectionReceipt(targetRegistryID: id, otherConnectedRegistryIDs: Set(devices.compactMap(\.mediaRegistryID))))
+        } catch {
+            ejectionFeedback = EjectionFeedback(title: "“\(target.displayName)”未能安全推出", message: error.localizedDescription + " 请先不要拔线。", failed: true)
+        }
+        slowNotice.cancel(); ejectingDisk = nil; ejectionIsSlow = false
+        // Catch mount/unmount notifications skipped while the operation was in flight.
+        await refresh(force: false, showProgress: false)
     }
     func record(for disk: DiskDevice) -> DeviceRecord {
         guard let identity = disk.persistentIdentity else { return DeviceRecord() }
