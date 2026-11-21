@@ -9,7 +9,7 @@ public enum LabelPhotoError: LocalizedError {
         switch self {
         case .tooLarge: return "照片超过 50 MB，请选择清晰的标签近照后重试。"
         case .unreadable: return "这张照片无法读取。请选择 PNG、JPEG、HEIC 或 TIFF 图片。"
-        case .noNumber: return "没有识别到完整的 SDSSDE 料号。请换一张清晰的标签近照，或手动填写；不会猜测模糊字符。"
+        case .noNumber: return "没有识别到含容量的 SDSSDE 型号或料号。请换一张清晰的标签近照，或手动填写；不会猜测模糊字符。"
         case .timedOut: return "照片识别超时，请换一张清晰的标签近照重试，也可以直接手动填写。"
         }
     }

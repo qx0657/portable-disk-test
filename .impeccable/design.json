@@ -386,7 +386,7 @@
       ]
     },
     "deviceKnowledge": {
-      "version": "1.2.0",
+      "version": "1.2.1",
       "brandAssets": {
         "sandisk": {
           "source": "Resources/Brands/provenance.json",
@@ -436,7 +436,7 @@
         "标签确认",
         "手动确认"
       ],
-      "partNumberPolicy": "A complete device-reported P/N takes display priority over confirmed local supplements. Supplements retain their own source and never rewrite the original Model or fill in missing capacity or regional codes.",
+      "partNumberPolicy": "Accept the literal label Model with capacity, such as SDSSDE82-4T00, or a suffixed P/N. Device-reported codes take display priority; local supplements keep their source. Never invent a suffix from a website or capacity.",
       "officialSeriesMatches": {
         "E82": {
           "basis": "SANDISK App 3.4.2 (2717) products.json and the official product page",
@@ -504,7 +504,7 @@
         "paddingPt": 28,
         "target": "Actual Model, capacity and bound physical serial stay visible above the scrollable middle.",
         "sourceLabels": "12pt medium field value with adjacent 11pt Palette.muted source text in device details; disclosure shows basis, official link and confirmed local record.",
-        "input": "Visible 完整料号 / P/N label, native roundedBorder TextField, focused on opening.",
+        "input": "Visible 盘身型号 / 料号 label, native roundedBorder TextField, focused on opening. Placeholder SDSSDE82-4T00; sales suffix optional.",
         "controls": "Native bordered photo action and borderedProminent save with existing Palette; Esc cancels and Return invokes the enabled default save.",
         "footer": "Cancel, save and local source information stay outside the middle ScrollView.",
         "saveDisabledWhen": [
@@ -513,7 +513,7 @@
           "OCR in progress",
           "conflict confirmation unchecked"
         ],
-        "conflict": "Amber explanatory text and an extra confirmation checkbox; editing the P/N resets that confirmation."
+        "conflict": "The same base Model with one optional suffix is compatible. Different explicit suffixes or differing directly compared Model/capacity codes require the existing extra confirmation."
       },
       "labelPhotoOCR": {
         "sourceOfTruth": "Sources/DiskCore/LabelPhotoReader.swift",
@@ -524,10 +524,10 @@
           "HEIC",
           "TIFF"
         ],
-        "scope": "Complete SanDisk SDSSDE retail codes only; other brands use manual entry.",
+        "scope": "SanDisk SDSSDE Model codes with capacity; retail suffix optional. Other brands use manual entry.",
         "ambiguityPolicy": "Never guess O/0, I/1 or other ambiguous characters.",
         "candidates": "One candidate fills the field for review; multiple candidates require the user to select the matching code.",
-        "savePolicy": "Only explicit 确认并保存 persists the reviewed P/N.",
+        "savePolicy": "Only explicit 确认并保存 persists the reviewed Model or P/N. No missing suffix is appended.",
         "privacy": "Photos and serials are not uploaded. No photo copy is saved."
       },
       "reviewEvidence": {
@@ -558,6 +558,24 @@
         ],
         "ocrFixture": "Explicitly marked SYNTHETIC; the example P/N was not saved to the actual user device.",
         "shippingRaster": "None added. Existing AppIcon and official brand SVG provenance records remain in place."
+      },
+      "labelCodeFormat": {
+        "baseExample": "SDSSDE82-4T00",
+        "suffixExample": "SDSSDE82-4T00-G25",
+        "requiresCapacity": true,
+        "requiresSalesSuffix": false,
+        "preservesLiteralCode": true,
+        "storageCompatibility": "Existing version 1 partNumber key retained; no migration or rewrite."
+      },
+      "formatFixEvidence": {
+        "version": "1.2.1",
+        "date": "2026-11-21",
+        "captures": [
+          ".impeccable/review/model-base-manual-light.png",
+          ".impeccable/review/model-base-ocr-dark.png",
+          ".impeccable/review/model-base-overview.png"
+        ],
+        "privacy": "Captures stay local; OCR uses a SYNTHETIC label and no fixture is saved to user records."
       }
     }
   },

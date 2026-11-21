@@ -99,6 +99,7 @@ public struct DeviceProfile: Sendable {
     public var brand: DriveBrand
     public var series: String?
     public var directlyReported = false
+    // Historical property name: accepts a reported label Model or a suffixed P/N.
     public var reportedPartNumber: String?
     public var basis: String?
     public var seriesSource: DeviceIdentitySource?
@@ -135,17 +136,17 @@ public enum DeviceCatalog {
         if let match = regex.firstMatch(in: disk.model, range: NSRange(location: 0, length: model.length)) {
             result.series = "E" + model.substring(with: match.range(at: 1)).uppercased()
             let part = model.substring(with: match.range(at: 0)).uppercased()
-            result.reportedPartNumber = PartNumber.sanDiskRetail(part)
+            result.reportedPartNumber = PartNumber.sanDiskCode(part)
             result.directlyReported = true
             result.seriesSource = .device
-            result.basis = "设备型号字符串直接提供 \(part)。完整料号只在设备实际提供时显示，不根据容量补全。"
+            result.basis = "设备型号字符串直接提供 \(part)。保留实际提供的型号或料号，不根据容量或销售资料添加后缀。"
         } else if ManufacturerCatalog.matchesE82(disk.hardware) {
             result.series = "E82"; result.seriesSource = .manufacturer
             result.sourceURL = ManufacturerCatalog.e82ProductURL
             result.basis = "硬件标识对应闪迪官方 App 3.4.2 产品目录中的 Extreme PRO with USB4，系列代码依据官方产品资料。匹配只确认产品系列，不补全容量或区域料号。"
         } else if let label, let series = PartNumber.sanDiskSeries(label.partNumber) {
             result.series = series; result.seriesSource = label.source == .photo ? .label : .manual
-            result.basis = "产品系列来自已确认的补充料号，保存在这台 Mac 上；设备报告的 Model 未被修改。"
+            result.basis = "产品系列来自已确认的盘身型号或料号，保存在这台 Mac 上；设备报告的 Model 未被修改。"
         }
         return result
     }

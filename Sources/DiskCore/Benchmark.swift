@@ -84,13 +84,13 @@ public struct ReportBuilder {
         var lines = ["移动硬盘测试 · 设备报告", "采集时间：\(s.date.formatted())", "电脑：\(Host.current().localizedName ?? "Mac")",
                      "型号：\(device.model)", "设备号：/dev/\(device.id)", "序列号：\(s.serial ?? "未提供")",
                      "品牌：\(profile.brand.title)", "产品系列：\(profile.seriesLabel ?? "未确认")",
-                     "完整料号：\(profile.partNumber ?? "设备未提供")", "料号来源：\(profile.partNumberSource?.title ?? "设备未提供，尚未补充")",
+                     "盘身型号 / 料号：\(profile.partNumber ?? "设备未提供")", "标识来源：\(profile.partNumberSource?.title ?? "设备未提供，尚未补充")",
                      "系列依据：\(profile.basis ?? "设备报告的原始型号名称，不推算销售型号")",
                      "固件：\(s.firmware ?? "未提供")", "容量：\(DiskFormat.bytes(device.capacity))", "连接：\(device.connection)",
                      "健康：\(s.health.title)", s.explanation, "", "SMART 指标"]
         if let url = profile.sourceURL { lines.insert("官方参考：\(url.absoluteString)", at: 11) }
         if let label {
-            lines.insert(contentsOf: ["本地补充料号：\(label.partNumber)（\(label.source.title)）", "确认时间：\(label.confirmedAt.formatted())"], at: 11)
+            lines.insert(contentsOf: ["本地补充型号 / 料号：\(label.partNumber)（\(label.source.title)）", "确认时间：\(label.confirmedAt.formatted())"], at: 11)
         }
         lines += s.fields.map { "\($0.name)：\($0.value)\($0.note.isEmpty ? "" : "（\($0.note)）")" }
         lines += ["", "卷与分区"]

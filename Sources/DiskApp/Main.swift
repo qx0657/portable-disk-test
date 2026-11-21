@@ -102,7 +102,7 @@ import DiskCore
         NSApp.mainMenu = main
     }
     @objc func showAbout() {
-        NSApp.orderFrontStandardAboutPanel(options: [.applicationName: "移动硬盘测试", .applicationVersion: Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.2.0",
+        NSApp.orderFrontStandardAboutPanel(options: [.applicationName: "移动硬盘测试", .applicationVersion: Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.2.1",
             .credits: NSAttributedString(string: "外接硬盘信息与 SMART 检测\n测速衔接 AmorphousDiskMark\n基于 smartmontools，非闪迪官方软件。")])
     }
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { true }

@@ -261,19 +261,19 @@ struct DiskCoreTests {
         let manual = DeviceCatalog.profile(for: makeDisk("disk9", serial: "A"), label: try DeviceLabel(partNumber: "SDSSDE82-4T00-Z25", source: .manual))
         checkEqual(manual.seriesSource, .manual)
     }
-    func testPartNumbersRequireFullCodeAndOCRDoesNotInventCharacters() throws {
+    func testLabelCodesRequireCapacityAndOCRDoesNotInventCharacters() throws {
         checkEqual(try PartNumber.validate(" sdssde82–4t00–g25 \n", sanDisk: true), "SDSSDE82-4T00-G25")
         checkEqual(try PartNumber.validate("MU-PE2T0S/WW"), "MU-PE2T0S/WW")
         checkEqual(try PartNumber.validate("SDSSDT40-8T00-G25", sanDisk: true), "SDSSDT40-8T00-G25")
         checkEqual(try PartNumber.validate("SDSSDH3-1T00-G26", sanDisk: true), "SDSSDH3-1T00-G26")
         checkThrows(try PartNumber.validate("Nickname123", sanDisk: true))
-        for value in ["E82", "SDSSDE82", "SDSSDE82-4T00", "SDSSDE82-4TOO-G25", "SanDisk Extreme SSD", "SDSSDE82-4T00-G25\nS/N123"] {
+        for value in ["E82", "SDSSDE82", "SDSSDE82-4TOO-G25", "SanDisk Extreme SSD", "SDSSDE82-4T00-G25\nS/N123"] {
             checkThrows(try PartNumber.validate(value, sanDisk: true))
         }
         checkEqual(PartNumber.sanDiskSeries("SDSSDE60-500G-G25"), "E60")
         checkEqual(PartNumber.sanDiskSeries("SDSSDE7W-1T00-G25"), "E7W")
         checkEqual(PartNumber.photoCandidates(in: ["P/N: SDSSDE82-4T00-G25", "SDSSDE82-4T00-G25", "SDSSDE60 -", "1T00 - G25"]), ["SDSSDE82-4T00-G25", "SDSSDE60-1T00-G25"])
-        checkTrue(PartNumber.photoCandidates(in: ["SDSSDEB2-4T00-G25", "SDSSDE82-4TOO-G25", "SDSSDE82-4T00"]).isEmpty)
+        checkTrue(PartNumber.photoCandidates(in: ["SDSSDEB2-4T00-G25", "SDSSDE82-4TOO-G25", "SDSSDE82"]).isEmpty)
     }
     func testLabelsFollowPhysicalSerialAcrossReplugAndVolumeRename() throws {
         var old = makeDisk("disk4", serial: "INTERNAL-ONE")
@@ -327,8 +327,8 @@ struct DiskCoreTests {
         let report = ReportBuilder.text(for: disk, label: try DeviceLabel(partNumber: "SDSSDE82-4T00-Z25", source: .photo))
         checkTrue(report.contains("型号：SanDisk Extreme Pro USB4"))
         checkTrue(report.contains("产品系列：E82 · 官方资料匹配"))
-        checkTrue(report.contains("料号来源：标签确认"))
-        checkTrue(report.contains("完整料号：SDSSDE82-4T00-Z25"))
+        checkTrue(report.contains("标识来源：标签确认"))
+        checkTrue(report.contains("盘身型号 / 料号：SDSSDE82-4T00-Z25"))
         checkFalse(ReportBuilder.text(for: disk).contains("SDSSDE82-4T00"))
     }
     func testUSB4LinkParsingRequiresDeviceUIDAndObservedSpeed() throws {
@@ -352,11 +352,12 @@ struct DiskCoreTests {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         defer { try? FileManager.default.removeItem(at: directory) }
-        let url = directory.appendingPathComponent("synthetic-label.png")
+        for code in ["SDSSDE82-4T00", "SDSSDE82-4T00-G25"] {
+        let url = directory.appendingPathComponent("synthetic-\(code).png")
         let context = try require(CGContext(data: nil, width: 1500, height: 420, bitsPerComponent: 8, bytesPerRow: 0,
             space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue))
         context.setFillColor(CGColor(gray: 1, alpha: 1)); context.fill(CGRect(x:0,y:0,width:1500,height:420))
-        for (text,y,size) in [("SYNTHETIC TEST LABEL",310.0,32.0),("SDSSDE82-4T00-G25",190.0,64.0),("S/N: FIXTURE-NOT-A-DEVICE",80.0,32.0)] {
+        for (text,y,size) in [("SYNTHETIC TEST LABEL",310.0,32.0),(code,190.0,64.0),("S/N: FIXTURE-NOT-A-DEVICE",80.0,32.0)] {
             let attributed = NSAttributedString(string:text, attributes:[
                 NSAttributedString.Key(kCTFontAttributeName as String):CTFontCreateWithName("Menlo" as CFString,size,nil),
                 NSAttributedString.Key(kCTForegroundColorAttributeName as String):CGColor(gray:0,alpha:1)])
@@ -365,13 +366,71 @@ struct DiskCoreTests {
         let image = try require(context.makeImage())
         let destination = try require(CGImageDestinationCreateWithURL(url as CFURL,"public.png" as CFString,1,nil))
         CGImageDestinationAddImage(destination,image,nil); checkTrue(CGImageDestinationFinalize(destination))
-        checkEqual(try LabelPhotoReader.recognize(url:url),["SDSSDE82-4T00-G25"])
-        if let fixture = ProcessInfo.processInfo.environment["PORTABLE_DISK_TEST_PHOTO_FIXTURE"] {
+        checkEqual(try LabelPhotoReader.recognize(url:url),[code])
+        let fixtureKey = code == "SDSSDE82-4T00" ? "PORTABLE_DISK_TEST_BASE_PHOTO_FIXTURE" : "PORTABLE_DISK_TEST_PHOTO_FIXTURE"
+        if let fixture = ProcessInfo.processInfo.environment[fixtureKey] {
             try Data(contentsOf:url).write(to:URL(fileURLWithPath:fixture))
+        }
         }
         let invalid = directory.appendingPathComponent("invalid.png")
         try Data("not an image".utf8).write(to:invalid)
         checkThrows(try LabelPhotoReader.recognize(url:invalid))
+    }
+    func testBareLabelModelsAndOptionalSKUSuffixes() throws {
+        for code in ["SDSSDE82-4T00", "SDSSDE82-4T00-G25", "SDSSDE60-1T00", "SDSSDE60-500G", "SDSSDT40-8T00", "SDSSDH3-1T00"] {
+            checkEqual(try PartNumber.validate(code, sanDisk: true), code)
+        }
+        checkEqual(try PartNumber.validate(" sdssde82–4t00 ", sanDisk: true), "SDSSDE82-4T00")
+        checkEqual(PartNumber.sanDiskSeries("SDSSDE82-4T00"), "E82")
+        checkEqual(PartNumber.baseModel("SDSSDE82-4T00-G25"), "SDSSDE82-4T00")
+        checkNil(PartNumber.sanDiskRetail("SDSSDE82-4T00"))
+        checkEqual(PartNumber.sanDiskRetail("SDSSDE82-4T00-G25"), "SDSSDE82-4T00-G25")
+        var disk = makeDisk("disk8", serial: "MODEL-FIXTURE")
+        disk.snapshot.model = "SanDisk SDSSDE82-4T00"
+        checkEqual(disk.profile.reportedPartNumber, "SDSSDE82-4T00")
+        checkEqual(disk.profile.seriesSource, .device)
+        checkTrue(disk.profile.directlyReported)
+        checkEqual(disk.model, "SanDisk SDSSDE82-4T00")
+    }
+    func testBaseModelAndMatchingSKUDoNotCreateFalseConflicts() {
+        var disk = makeDisk("disk8", serial: "MODEL-FIXTURE")
+        disk.snapshot.model = "SDSSDE82-4T00-G25"
+        checkNil(PartNumber.conflict(for: disk, partNumber: "SDSSDE82-4T00"))
+        checkNotNil(PartNumber.conflict(for: disk, partNumber: "SDSSDE82-4T00-Z25"))
+        disk.snapshot.model = "SDSSDE82-4T00"
+        checkNil(PartNumber.conflict(for: disk, partNumber: "SDSSDE82-4T00-G25"))
+        checkNotNil(PartNumber.conflict(for: disk, partNumber: "SDSSDE82-2T00"))
+        checkNotNil(PartNumber.conflict(for: disk, partNumber: "SDSSDE60-1T00"))
+        disk.snapshot.model = "SDSSDE82"
+        checkNil(disk.profile.reportedPartNumber)
+        checkEqual(disk.profile.series, "E82")
+    }
+    func testBareModelPersistenceAndReportNeverInventSuffix() throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let store = DeviceLabelStore(url: directory.appendingPathComponent("device-labels.json"))
+        let bare = try DeviceLabel(partNumber: "SDSSDE82-4T00", source: .manual)
+        let oldSKU = try DeviceLabel(partNumber: "SDSSDE60-1T00-G25", source: .photo)
+        try store.save(["hardware:BARE-FIXTURE": bare, "hardware:OLD-FIXTURE": oldSKU])
+        let reopened = try DeviceLabelStore(url: store.url).load()
+        checkEqual(reopened["hardware:BARE-FIXTURE"], bare)
+        checkEqual(reopened["hardware:OLD-FIXTURE"], oldSKU)
+        let disk = makeDisk("disk8", serial: "BARE-FIXTURE")
+        let profile = DeviceCatalog.profile(for: disk, label: reopened["hardware:BARE-FIXTURE"])
+        checkEqual(profile.partNumber, "SDSSDE82-4T00")
+        checkEqual(profile.series, "E82")
+        checkEqual(profile.partNumberSource, .manual)
+        let report = ReportBuilder.text(for: disk, label: bare)
+        checkTrue(report.contains("盘身型号 / 料号：SDSSDE82-4T00\n"))
+        checkFalse(report.contains("SDSSDE82-4T00-"))
+        checkEqual(disk.model, "SanDisk Extreme Pro USB4")
+    }
+    func testOCRAcceptsLabelModelWithoutTruncatingInvalidSuffix() {
+        checkEqual(PartNumber.photoCandidates(in: ["Model: SDSSDE82-4T00", "P/N: SDSSDE82-4T00-G25"]), ["SDSSDE82-4T00", "SDSSDE82-4T00-G25"])
+        checkEqual(PartNumber.photoCandidates(in: ["Model: SDSSDE82 - 4T00", "S/N: SYNTHETIC"]), ["SDSSDE82-4T00"])
+        for invalid in ["SDSSDE82-4T00-", "SDSSDE82-4T00-G", "SDSSDE82-4T00-G25EXTRALONG", "XSDSSDE82-4T00", "SDSSDE82-4T00-G25-EXTRA", "SDSSDE82-4T00 -"] {
+            checkTrue(PartNumber.photoCandidates(in: [invalid]).isEmpty)
+        }
     }
     // Synthetic parser fixture using the user's reported scores; never seeds the application UI or history.
     static let benchmark = """
@@ -446,13 +505,17 @@ private func checkThrows<T>(_ expression: @autoclosure () throws -> T, file: Sta
             ("testBusySMARTChannelIsNotReportedAsPermanentUnsupportedHardware", suite.testBusySMARTChannelIsNotReportedAsPermanentUnsupportedHardware),
             ("testManufacturerCatalogRequiresVerifiedHardwareAndKeepsSKUUnknown", suite.testManufacturerCatalogRequiresVerifiedHardwareAndKeepsSKUUnknown),
             ("testConfirmedLabelsSupplementIdentityWithoutOverwritingReportedModel", suite.testConfirmedLabelsSupplementIdentityWithoutOverwritingReportedModel),
-            ("testPartNumbersRequireFullCodeAndOCRDoesNotInventCharacters", suite.testPartNumbersRequireFullCodeAndOCRDoesNotInventCharacters),
+            ("testLabelCodesRequireCapacityAndOCRDoesNotInventCharacters", suite.testLabelCodesRequireCapacityAndOCRDoesNotInventCharacters),
             ("testLabelsFollowPhysicalSerialAcrossReplugAndVolumeRename", suite.testLabelsFollowPhysicalSerialAcrossReplugAndVolumeRename),
             ("testClonedEnclosureSerialsDisableLabelBinding", suite.testClonedEnclosureSerialsDisableLabelBinding),
             ("testLabelStoreRoundTripIsolationAndCorruptionPreservation", suite.testLabelStoreRoundTripIsolationAndCorruptionPreservation),
             ("testReportKeepsDeviceNameAndExplicitLabelSources", suite.testReportKeepsDeviceNameAndExplicitLabelSources),
             ("testUSB4LinkParsingRequiresDeviceUIDAndObservedSpeed", suite.testUSB4LinkParsingRequiresDeviceUIDAndObservedSpeed),
-            ("testLocalVisionOCRReadsSyntheticLabelAndRejectsNonImages", suite.testLocalVisionOCRReadsSyntheticLabelAndRejectsNonImages)
+            ("testLocalVisionOCRReadsSyntheticLabelAndRejectsNonImages", suite.testLocalVisionOCRReadsSyntheticLabelAndRejectsNonImages),
+            ("testBareLabelModelsAndOptionalSKUSuffixes", suite.testBareLabelModelsAndOptionalSKUSuffixes),
+            ("testBaseModelAndMatchingSKUDoNotCreateFalseConflicts", suite.testBaseModelAndMatchingSKUDoNotCreateFalseConflicts),
+            ("testBareModelPersistenceAndReportNeverInventSuffix", suite.testBareModelPersistenceAndReportNeverInventSuffix),
+            ("testOCRAcceptsLabelModelWithoutTruncatingInvalidSuffix", suite.testOCRAcceptsLabelModelWithoutTruncatingInvalidSuffix)
         ]
         for (name, run) in cases {
             let before = Checks.failures

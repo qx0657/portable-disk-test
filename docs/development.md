@@ -19,7 +19,7 @@ swift run -c release DiskCoreChecks
 
 这是独立可执行检查程序，不需要 XCTest / Testing 插件。一般开发选择与变更有关的一种构建配置检查即可，不必无故重复两套。
 
-目前 34 组、172 个断言。夹具中的序列号、WWN 和 USB4 UID 已脱敏或合成；检查在临时目录验证读写，OCR 使用明确标注的合成标签。检查本身不读取外接实盘、不创建真实测速文件。
+目前 38 组、211 个断言。夹具中的序列号、WWN 和 USB4 UID 已脱敏或合成；检查在临时目录验证读写，OCR 使用明确标注的合成标签。检查本身不读取外接实盘、不创建真实测速文件。
 
 ## 构建
 
@@ -80,7 +80,7 @@ mkdir -p work
 | `--empty-preview` | 捕获时预览无设备状态 |
 | `--import-preview=/absolute/result.txt` | 捕获时预览文字成绩确认 sheet |
 | `--label-editor-preview` | 捕获时预览料号补充 sheet |
-| `--label-number-preview=完整料号` | 捕获时在料号 sheet 预填未保存的检查值 |
+| `--label-number-preview=型号或料号` | 捕获时在料号 sheet 预填未保存的检查值 |
 | `--label-photo-preview=/absolute/label.png` | 捕获时在料号 sheet 验证本地 OCR |
 
 模拟状态必须与 `--capture=` 组合使用，正常启动不预填这些检查值。捕获模式不写用户历史或补充记录，但真实设备捕获仍可能含私人标识。诊断图片默认保留在被忽略的本地目录，不随仓库公开。
@@ -103,6 +103,8 @@ codesign --verify --strict "outputs/移动硬盘测试.app"
 上例文件名适用于 arm64 宿主；其他架构应相应命名。发布时核对 Info.plist 版本、二进制架构、签名、第三方许可证与对应源码。压缩包不应包含 `history.json`、`device-labels.json`、标签照片、实盘扫描或备份。
 
 Git 源码发布与二进制 Release 是不同动作。提交前查看暂存文件，确认缓存、研究材料和私人数据被排除；不要为了分享截图直接加入带序列号的实盘捕获。
+
+补充记录继续使用 version 1 和原有 `partNumber` 字段，字段值可以是无销售后缀的盘身 Model 或带后缀的 P/N。不要为这次格式放宽改名、清空或迁移用户旧记录。
 
 ## 维护注意事项
 

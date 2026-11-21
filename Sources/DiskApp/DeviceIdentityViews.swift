@@ -14,12 +14,12 @@ struct DeviceIdentitySection: View {
                 Text("设备信息").font(.system(size: 14, weight: .semibold))
                 Spacer()
                 Button { model.labelEditor = LabelEditorTarget(disk: disk) } label: {
-                    Label(label == nil ? "补充料号…" : "编辑补充…", systemImage: "pencil")
+                    Label(label == nil ? "补充型号…" : "编辑补充…", systemImage: "pencil")
                 }.buttonStyle(.borderless).font(.system(size: 12))
                     .help("手动填写或识别标签照片，确认后保存在这台 Mac 上")
             }
             identityRow("产品系列", value: profile.series ?? "未确认", source: profile.seriesSource)
-            identityRow("完整料号", value: profile.partNumber ?? "设备未提供", source: profile.partNumberSource)
+            identityRow("型号 / 料号", value: profile.partNumber ?? "设备未提供", source: profile.partNumberSource)
             Grid(alignment: .leading, horizontalSpacing: 34, verticalSpacing: 15) {
                 GridRow { InfoPair("序列号", disk.snapshot.serial ?? "未提供"); InfoPair("固件版本", disk.snapshot.firmware ?? "未提供") }
                 GridRow { InfoPair("品牌", profile.brand.title); InfoPair("介质类型", disk.solidState == true ? "固态硬盘（SSD）" : disk.solidState == false ? "机械硬盘（HDD）" : "未提供") }
@@ -37,7 +37,7 @@ struct DeviceIdentitySection: View {
             }
             DisclosureGroup("识别依据与补充记录") {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text(profile.basis ?? "上方 Model 为设备实际返回的名称。当前没有可靠的产品系列匹配依据，完整料号可从盘身标签补充。")
+                    Text(profile.basis ?? "上方 Model 为设备实际返回的名称。当前没有可靠的产品系列匹配依据，型号或料号可从盘身标签补充。")
                     if let url = profile.sourceURL { Link("查看闪迪官方产品资料", destination: url) }
                     if let label {
                         Text("本地补充：\(label.partNumber) · \(label.source.title) · \(label.confirmedAt.formatted(date: .abbreviated, time: .shortened))")
@@ -88,8 +88,8 @@ struct DeviceLabelEditor: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             VStack(alignment: .leading, spacing: 8) {
-                Text("补充完整料号").font(.system(size: 20, weight: .semibold))
-                Text("从盘身标签填写或识别，核对后关联到下面这块硬盘。")
+                Text("补充盘身型号").font(.system(size: 20, weight: .semibold))
+                Text("照抄标签上的 Model 或 P/N，核对后关联到下面这块硬盘。")
                     .font(.system(size: 12)).foregroundStyle(Palette.muted)
             }
             VStack(alignment: .leading, spacing: 7) {
@@ -100,12 +100,12 @@ struct DeviceLabelEditor: View {
             ScrollView {
               VStack(alignment: .leading, spacing: 16) {
                VStack(alignment: .leading, spacing: 9) {
-                Text("完整料号 / P/N").font(.system(size: 12, weight: .medium))
-                TextField(target.disk.isSanDisk ? "例如 SDSSDE82-4T00-G25" : "填写盘身上的完整料号", text: $partNumber)
+                Text("盘身型号 / 料号").font(.system(size: 12, weight: .medium))
+                TextField(target.disk.isSanDisk ? "例如 SDSSDE82-4T00" : "填写标签上的 Model 或 P/N", text: $partNumber)
                     .textFieldStyle(.roundedBorder).font(.system(size: 13)).focused($fieldFocused)
-                    .accessibilityLabel("完整料号")
+                    .accessibilityLabel("盘身型号或料号")
                     .onChange(of: partNumber) { _, _ in saveError = nil; confirmedConflict = false }
-                Text("请照抄盘身完整 P/N，不要填写产品名称或序列号。")
+                Text("含容量的型号即可；后缀可选，请按标签原样填写。")
                     .font(.system(size: 11)).foregroundStyle(Palette.muted)
                 HStack(spacing: 12) {
                     Button { choosePhoto() } label: { Label("从标签照片识别…", systemImage: "photo") }
@@ -114,7 +114,7 @@ struct DeviceLabelEditor: View {
                     else { Text("照片不上传，也不保存副本").font(.system(size: 11)).foregroundStyle(Palette.muted) }
                 }.padding(.top, 3)
                 if !target.disk.isSanDisk {
-                    Text("照片识别目前支持闪迪 SDSSDE 料号，其他品牌请手动填写。")
+                    Text("照片识别目前支持闪迪 SDSSDE 型号或料号，其他品牌请手动填写。")
                         .font(.system(size: 11)).foregroundStyle(Palette.muted)
                 }
             }
@@ -143,7 +143,7 @@ struct DeviceLabelEditor: View {
             if let conflict {
                 VStack(alignment: .leading, spacing: 8) {
                     message(conflict, symbol: "exclamationmark.triangle")
-                    Toggle("我已核对目标设备和标签，仍保存此补充料号", isOn: $confirmedConflict).font(.system(size: 12))
+                    Toggle("我已核对目标设备和标签，仍保存此补充信息", isOn: $confirmedConflict).font(.system(size: 12))
                 }
             }
             if let saveError { message(saveError, symbol: "exclamationmark.triangle") }
@@ -182,7 +182,7 @@ struct DeviceLabelEditor: View {
             if photoURL != nil { startRecognition() }
         }
         .onDisappear { photoTask?.cancel(); model.isRecognizingLabelPhoto = false }
-        .confirmationDialog("移除此设备的补充料号？", isPresented: $removing, titleVisibility: .visible) {
+        .confirmationDialog("移除此设备的补充型号信息？", isPresented: $removing, titleVisibility: .visible) {
             Button("移除补充", role: .destructive) {
                 do { try model.removeLabel(target: target); dismiss() } catch { saveError = error.localizedDescription }
             }
@@ -200,7 +200,7 @@ struct DeviceLabelEditor: View {
         let panel = NSOpenPanel(); panel.allowedContentTypes = [.png, .jpeg, .heic, .tiff]
         panel.allowsMultipleSelection = false; panel.canChooseDirectories = false
         panel.title = "选择硬盘标签照片"
-        panel.message = "请使用能清楚看到完整 P/N 的标签近照；照片只在本地识别。"
+        panel.message = "请使用清楚显示 Model 或 P/N 的标签近照；照片只在本地识别。"
         guard panel.runModal() == .OK, let url = panel.url else { return }
         candidates = []; photoError = nil; saveError = nil; photoURL = url; photoRevision += 1
         startRecognition()

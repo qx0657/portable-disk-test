@@ -137,7 +137,7 @@ struct LabelEditorTarget: Identifiable {
         // Capture previews never modify the user's confirmed labels.
         guard !ProcessInfo.processInfo.arguments.contains(where: { $0.hasPrefix("--capture=") }) else { return }
         do { try labelStore.save(updated); labels = updated; labelError = nil }
-        catch { labelError = "补充料号未能保存：\(error.localizedDescription)"; throw error }
+        catch { labelError = "补充型号或料号未能保存：\(error.localizedDescription)"; throw error }
     }
     func saveHistory() {
         guard !ProcessInfo.processInfo.arguments.contains(where: { $0.hasPrefix("--capture=") }) else { return }

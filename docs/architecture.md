@@ -57,13 +57,13 @@ flowchart LR
 
 ## 型号与链路
 
-`DeviceCatalog` 区分真实 Model、系列和完整料号。设备原文、厂商规则与用户确认均有独立来源，补充信息不会改写原始字段。具体规则见[型号识别说明](model-identification.md)。
+`DeviceCatalog` 区分接口返回的 Model、产品系列与标签型号 / 料号。设备原文、厂商规则与用户确认均有独立来源，补充信息不会改写原始字段。具体规则见[型号识别说明](model-identification.md)。
 
 USB 硬件属性只从当前盘的 IOMedia 父链读取。NVMe 的 USB4 信息通过当前盘的 PCI 隧道路径定位外壳，再按 UID 对应 `system_profiler` 的当前链路速率。不能全局按名称找一台同型号设备，不能将扩展坞能力当成下游 USB 硬盘能力。
 
 ## 本地存储与导出
 
-`history.json` 保存首次记录时间、温度与测速成绩；`device-labels.json` 保存已确认料号、来源和时间。两者均在当前用户的 Application Support 下，采用原子写入。读入失败时保留原文件；不会用空记录自动覆盖。
+`history.json` 保存首次记录时间、温度与测速成绩；`device-labels.json` 保存已确认的盘身型号或料号、来源和时间。两者均在当前用户的 Application Support 下，采用原子写入。读入失败时保留原文件；不会用空记录自动覆盖。
 
 报告由 `ReportBuilder` 组合当前设备数据、来源说明和关联的测速结果；原始 SMART 保留原样。用户在保存面板中选择导出位置，只有这一步可能将报告写到移动硬盘。
 
